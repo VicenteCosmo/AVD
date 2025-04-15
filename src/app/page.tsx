@@ -1,6 +1,7 @@
+import DashboardLayout from "./(dashboard)/layout"
 const Homepage = () => {
   return (
-    <div className=''>Homepage</div>
+    <div className=''></div>
   )
 }
 

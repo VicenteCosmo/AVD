@@ -1,18 +1,33 @@
+// components/UserCardStats.tsx
 import Image from "next/image";
 
-const UserCard = ({ type }: { type: string }) => {
+interface UserCardStatsProps {
+  title: string;
+  value: number;
+  iconSrc: string;
+  bgColor?: string;
+  badge?: string;
+}
+
+const UserCardStats = ({
+  title,
+  value,
+  iconSrc,
+  bgColor = "bg-blue-100",
+  badge,
+}: UserCardStatsProps) => {
   return (
-    <div className="rounded-2xl odd:bg-lamaPurple even:bg-lamaYellow p-4 flex-1 min-w-[130px]">
-      <div className="flex justify-between items-center">
-        <span className="text-[10px] bg-white px-2 py-1 rounded-full text-green-600">
-          2024/25
+    <div className={`rounded-xl ${bgColor} p-4 flex flex-col items-center shadow-md`}>
+      {badge && (
+        <span className="text-xs bg-gray-200 px-7 py-1 rounded-full mb-2">
+          {badge}
         </span>
-        <Image src="/more.png" alt="" width={20} height={20} />
-      </div>
-      <h1 className="text-2xl font-semibold my-4">1,234</h1>
-      <h2 className="capitalize text-sm font-medium text-gray-500">{type}s</h2>
+      )}
+      <Image src={iconSrc} alt={title} width={40} height={40} className="mb-3" />
+      <h1 className="text-3xl font-bold">{value}</h1>
+      <p className="text-sm text-gray-700">{title}</p>
     </div>
   );
 };
 
-export default UserCard;
+export default UserCardStats;
