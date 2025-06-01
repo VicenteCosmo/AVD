@@ -10,7 +10,7 @@ export default function Section1(){
             <div className="block justify-center mx-auto md:flex md:flex-row sm:flex-col align-content-center " >
 
                 <div className=" py-5 w-1/2  " >
-                    <h1 className="text-white text-5xl font-bold  " >
+                    <h1 className="text-white text-5xl font-bold bg-gradient-to-r from-[#3ffc2f] to-[#2f83c3] bg-clip-text text-transparent " >
                         Simplifique sua gestão de RH com o nosso software.
                     </h1>
 
@@ -26,7 +26,7 @@ export default function Section1(){
             </div>
 
             {/* Buttos */}
-            <div className=" gap-x-9 flex lg:ml-20  " >
+            <div className=" gap-x-9 flex lg:ml-28  " >
                         <Link href="/registrar" className="bg-white px-10 py-5 rounded-3xl hover:bg-transparent hover:border-white
                         hover:border-2
                         " >

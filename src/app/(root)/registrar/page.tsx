@@ -94,15 +94,15 @@ const Page = () => {
   }
 
   return (
-    <div>
+    <div className='w-full' >
       <div className=" py-5 " >
-        <h1 className="text-white text-2xl font-bold  " >
+        <h1 className="text-white text-2xl font-bold text-center  " >
           Simplifique sua gestão de RH com o nosso software.
         </h1>
 
       </div>
 
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#3ffc2f] to-[#2f83c3]  p-4">
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Cadastro de Empresa

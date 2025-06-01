@@ -48,11 +48,20 @@ const Login = () => {
 
               if(res1.status === 200){
                 Swal.fire({
-                  title: "Um email foi enviado para si!",
+                  title: "Senha resetada com sucesso!",
                   icon: "success",
                   draggable: true
                 });
-                router.push('/resetar_senha')
+                router.push('/login')
+              }
+
+              if(res1.status === 400){
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Verifique o seu token!",
+                  // footer: 'Certifique-se de que o NIF, e-mail e telefone estão correctos! '
+                });  
               }
 
                 if(res === 'Usuário não existente!'){
@@ -111,7 +120,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+    <div className="min-h-screen w-full bg-gradient-to-r from-[#3ffc2f] to-[#2f83c3] flex items-center justify-center">
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Insira o seu Email
@@ -121,12 +130,12 @@ const Login = () => {
           {/* Nome do Representante */}
           <div className="mb-4">
             <label htmlFor="repName" className="block text-gray-700">
-              Nome do Representante
+              Seu token
             </label>
             <input
               type="text"
               id="repName"
-              placeholder="Digite o nome do representante"
+              placeholder="Digite seu token aqui"
               className="w-full p-3 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
               required
               onChange={(e) => setRepName(e.target.value)}

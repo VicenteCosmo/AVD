@@ -4,7 +4,7 @@ import Image from 'next/image'
 
 import { User } from '@deemlol/next-icons'
 import Navbar from './components/Navbar'
-import { FooterWithLogo } from './components/Footer'
+import Footer from './components/Footer'
 
 const Layout = ({children}: {children: React.ReactNode}) => {
   return (
@@ -15,7 +15,7 @@ const Layout = ({children}: {children: React.ReactNode}) => {
       items-center justify-center px-4 py-20 xl:px-0 ' id='globalSection' >
       {children} </div>
 
-      <FooterWithLogo />
+      <Footer />
 
     </div>
 

@@ -45,7 +45,7 @@ const Login = () => {
                   icon: "success",
                   draggable: true
                 });
-                router.push('/admin')
+                router.push('/personalizar')
               }
 
                 if(res === 'Usuário não existente!'){

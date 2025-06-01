@@ -44,7 +44,7 @@ const menuItems = [
       {
         icon: "/treinamento.png",
         label: "Formações",
-        href: "/list/Formacoes",
+        href: "/get_courses",
         visible: ["admin", "funcionario"],
       },
       {
