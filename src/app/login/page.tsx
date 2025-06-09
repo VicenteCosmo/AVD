@@ -1,100 +1,95 @@
-'use client'
-import { useState } from "react";
-import Router from "next/router";
+"use client"; 
+// Diz ao Next.js que este componente será executado no cliente (navegador).
 
-const Login = () => {
-  const [email, setEmail] = useState(""); // Usando email para login
-  const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+import { useState } from "react"; 
+// Importa o hook useState do React para criarmos variáveis de estado (email, carregando).
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrorMessage("");
-    setLoading(true);
+import { useRouter } from "next/navigation"; 
+
+import { Input } from "@/components/ui/input"; 
+
+import { Label } from "@/components/ui/label"; 
+
+import { Button } from "@/components/ui/button"; 
+
+export default function LoginFuncionario() { 
+
+  const [email, setEmail] = useState(""); 
+
+  const [carregando, setCarregando] = useState(false); 
+
+  const router = useRouter(); 
+
+  async function handleSubmit(e: React.FormEvent) { 
+    e.preventDefault(); 
+
+    setCarregando(true); 
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/login/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ email, password })
-      });
+      const resposta = await fetch(
+        "http://localhost:8000/api/funcionarios/send-otp/",
+        {
+          method: "POST", 
 
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("access", data.access);
-        localStorage.setItem("refresh", data.refresh);
-        Router.push("/dashboard"); // Redireciona para a área interna do sistema
+          headers: { "Content-Type": "application/json" }, 
+
+          body: JSON.stringify({ email }),
+        }
+      );
+
+      if (resposta.ok) {
+        router.push(
+          `/verificar-otp?email=${encodeURIComponent(email)}`
+        );
       } else {
-        const data = await response.json();
-        setErrorMessage(data.detail || "Falha no login.");
+        const dados = await resposta.json();
+        alert("Erro: " + JSON.stringify(dados));
       }
-    } catch (error) {
-      setErrorMessage("Ocorreu um erro. Tente novamente.");
+    } catch (erro) {
+      console.error("Erro ao enviar OTP:", erro);
+      alert("Não foi possível conectar ao servidor.");
     } finally {
-      setLoading(false);
+      setCarregando(false);
     }
-  };
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          Login - Sistema RH
-        </h2>
-        <form onSubmit={handleSubmit}>
-          {/* Email */}
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Digite seu email corporativo"
-              className="w-full p-3 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
-          </div>
-          {/* Senha */}
-          <div className="mb-6">
-            <label htmlFor="password" className="block text-gray-700">
-              Senha
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Digite sua senha"
-              className="w-full p-3 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
-          </div>
-          {errorMessage && (
-            <p className="mb-4 text-center text-red-500">{errorMessage}</p>
-          )}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200 disabled:opacity-50"
-          >
-            {loading ? "Entrando..." : "Login"}
-          </button>
-        </form>
-        <p className="mt-4 text-center text-gray-700">
-          Ainda não tem cadastro?{" "}
-          <a href="/company-signup" className="text-blue-600 hover:underline">
-            Cadastrar Empresa
-          </a>
-        </p>
-      </div>
+    <div className="flex justify-center items-center min-h-screen">
+      {/* Container que centraliza vertical e horizontalmente */}
+      <form
+        onSubmit={handleSubmit}
+        // Liga o evento de submit do form à função handleSubmit.
+        className="space-y-4 w-full max-w-md bg-white p-6 rounded-2xl shadow"
+        // Aplica classes Tailwind para espaçamento, largura, background, padding, bordas arredondadas e sombra.
+      >
+        <h1 className="text-2xl font-bold text-center">
+          Login Inicial
+        </h1>
+        {/* Título da página de login */}
+
+        <div>
+          <Label htmlFor="email">E-mail</Label>
+          {/* Label apontando para o input de id="email" */}
+          <Input
+            id="email"
+            type="email"
+            required
+            // Garante que o campo seja preenchido e contenha formato de email.
+            value={email}
+            // Liga o valor do input ao estado "email".
+            onChange={(e) => setEmail(e.target.value)}
+            // Atualiza o estado "email" sempre que o usuário digitar.
+            placeholder="seu.email@empresa.com"
+            // Texto de exemplo dentro do campo.
+          />
+        </div>
+
+        <Button type="submit" className="w-full" disabled={carregando}>
+          {/* Botão ocupa toda a largura e fica desabilitado se carregando for true */}
+          {carregando ? "Enviando OTP..." : "Enviar OTP"}
+          {/* Texto do botão muda conforme o estado de carregamento */}
+        </Button>
+      </form>
     </div>
   );
-};
-
-export default Login;
+}

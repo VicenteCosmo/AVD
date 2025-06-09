@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef , useContext} from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-
+import { AuthContext } from '@/app/context/AuthContext';
 interface Assiduidade {
   id: number;
   funcionario: number;
@@ -20,6 +20,7 @@ interface Funcionario {
 }
 
 export default function FormModalAssiduidade() {
+  const {accessToken, userId, userName}=useContext(AuthContext)
   const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]);
   const [assiduidadeList, setAssiduidadeList] = useState<Assiduidade[]>([]);
   const [formData, setFormData] = useState({
@@ -30,9 +31,15 @@ export default function FormModalAssiduidade() {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editedSaida, setEditedSaida] = useState<string>('');
+
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [isRegisteringFace, setIsRegisteringFace] = useState(false);
+  const [isRegisteringExit, setIsRegisteringExit] = useState(false);
+  const [newFaceName, setNewFaceName] = useState('');
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
     fetchFuncionarios();
@@ -46,7 +53,7 @@ export default function FormModalAssiduidade() {
   };
 
   const fetchAssiduidade = async () => {
-    const res = await fetch('http://127.0.0.1:8000/api/assiduidade/');
+    const res = await fetch('http://127.0.0.1:8000/api/assiduidade/todos/');
     const data = await res.json();
     setAssiduidadeList(data);
   };
@@ -57,10 +64,11 @@ export default function FormModalAssiduidade() {
   };
 
   const handleEntrada = async () => {
+    const acessToken=localStorage.getItem('access_token')
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/assiduidade/', {
+      const res = await fetch('http://127.0.0.1:8000/api/assiduidade/todos/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -70,8 +78,15 @@ export default function FormModalAssiduidade() {
         }),
       });
 
-      if (!res.ok) throw new Error('Erro ao registrar entrada');
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Erro ao registrar entrada');
+      }
+
+      // Atualizar lista imediatamente após sucesso
       await fetchAssiduidade();
+      
+      // Fechar modal apenas após atualização
       setOpen(false);
       setFormData({ funcionario: '', entrada: '', data: '' });
     } catch (err: any) {
@@ -81,22 +96,25 @@ export default function FormModalAssiduidade() {
     }
   };
 
-  const handleSaidaEdit = async () => {
-    if (editingId === null || !editedSaida) return;
+  const handleSaidaEdit = async (id: number, saida: string) => {
     setLoading(true);
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/assiduidade/${editingId}/`, {
+      const res = await fetch(`http://127.0.0.1:8000/api/assiduidade/${id}/`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ saida: editedSaida }),
+        body: JSON.stringify({ saida }),
       });
 
-      if (!res.ok) throw new Error('Erro ao registrar saída');
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Erro ao registrar saída');
+      }
+
       await fetchAssiduidade();
       setEditingId(null);
       setEditedSaida('');
     } catch (err: any) {
-      alert(err.message);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -119,45 +137,259 @@ export default function FormModalAssiduidade() {
     doc.save('relatorio-assiduidade.pdf');
   };
 
+  // Funções para manipulação da câmera
+  const openCamera = async () => {
+    setIsCameraOpen(true);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'user' } 
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (err) {
+      setError('Erro ao acessar a câmera: ' + (err as Error).message);
+    }
+  };
+
+  const captureImage = (): string | null => {
+    if (!videoRef.current) return null;
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    const ctx = canvas.getContext('2d');
+    
+    if (ctx) {
+      ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+      return canvas.toDataURL('image/jpeg');
+    }
+    return null;
+  };
+
+  const closeCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    setIsCameraOpen(false);
+    setIsRegisteringFace(false);
+    setIsRegisteringExit(false);
+  };
+
+  // Reconhecimento facial
+  const recognizeFace = async () => {
+    const imageData = captureImage();
+    if (!imageData) {
+      setError('Falha ao capturar imagem');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/facial_recognition/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: imageData }),
+      });
+
+      const data = await response.json();
+      
+      if (response.ok && data.funcionario_id) {
+        // Preencher automaticamente data e hora atuais
+        const now = new Date();
+        const hora = now.toTimeString().slice(0, 5); // HH:MM
+        const dataAtual = now.toISOString().split('T')[0]; // YYYY-MM-DD
+
+        if (isRegisteringExit) {
+          // Registrar saída automaticamente
+          await registrarSaida(data.funcionario_id, hora);
+        } else {
+          // Preencher formulário de entrada
+          setFormData({
+            funcionario: data.funcionario_id.toString(),
+            entrada: hora,
+            data: dataAtual,
+          });
+        }
+
+        // Não fechar o modal aqui!
+        closeCamera();
+      } else {
+        setError(data.error || 'Funcionário não reconhecido');
+      }
+    } catch (err) {
+      setError('Erro no reconhecimento facial: ' + (err as Error).message);
+    }
+  };
+
+  // Cadastro de nova face
+  const registerNewFace = async () => {
+    if (!newFaceName) {
+      setError('Digite o nome do funcionário');
+      return;
+    }
+
+    const imageData = captureImage();
+    if (!imageData) {
+      setError('Falha ao capturar imagem');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:8000/api/register_face/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          name: newFaceName,
+          image: imageData 
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert('Rosto cadastrado com sucesso!');
+        setNewFaceName('');
+        closeCamera();
+        fetchFuncionarios();
+      } else {
+        setError(data.error || 'Erro ao cadastrar rosto');
+      }
+    } catch (err) {
+      setError('Erro no cadastro facial: ' + (err as Error).message);
+    }
+  };
+
+  // Registrar saída automaticamente
+  const registrarSaida = async (funcionarioId: number, horaSaida: string) => {
+    try {
+      // Encontrar registro pendente de saída
+      const registro = assiduidadeList.find(item => 
+        item.funcionario.toString() === funcionarioId.toString() && 
+        item.saida === null
+      );
+
+      if (registro) {
+        // Atualizar registro existente
+        await handleSaidaEdit(registro.id, horaSaida);
+      } else {
+        // Criar novo registro de saída (caso não haja entrada)
+        const now = new Date();
+        const dataAtual = now.toISOString().split('T')[0];
+        
+        const res = await fetch('http://127.0.0.1:8000/api/assiduidade/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            funcionario: funcionarioId,
+            entrada: '00:00', // Entrada padrão
+            saida: horaSaida,
+            data: dataAtual,
+          }),
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.error || 'Erro ao registrar saída');
+        }
+
+        // Atualizar lista
+        await fetchAssiduidade();
+      }
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  // Abrir câmera para registrar saída
+  const openCameraSaida = async () => {
+    setIsRegisteringExit(true);
+    await openCamera();
+  };
+
+  useEffect(() => {
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
+
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-800">Gestão de Assiduidade</h1>
         <button
           onClick={exportToPDF}
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2  rounded shadow"
+          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded shadow"
         >
           Exportar PDF
         </button>
       </div>
 
-      <button
-        onClick={() => setOpen(true)}
-        className="bg-blue-600 hover:bg-blue-700 text-white  px-4 py-2 rounded shadow"
-      >
-        Registrar Entrada
-      </button>
+      <div className="flex space-x-4">
+        <button
+          onClick={() => setOpen(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow"
+        >
+          Registrar Entrada
+        </button>
+        
+        <button
+          onClick={openCameraSaida}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"
+        >
+          Registrar Saída
+        </button>
+        
+        <button
+          onClick={() => {
+            setIsRegisteringFace(true);
+            openCamera();
+          }}
+          className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded shadow"
+        >
+          Cadastrar Novo Rosto
+        </button>
+      </div>
 
       {open && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96 space-y-4">
             <h2 className="text-xl font-semibold text-gray-800">Nova Entrada</h2>
 
-            <select
-              name="funcionario"
-              value={formData.funcionario}
-              onChange={handleChange}
-              className="w-full border px-3 py-2 rounded"
-              required
+            <button
+              onClick={openCamera}
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded"
             >
-              <option value="">Selecione o Funcionário</option>
-              {funcionarios.map((f) => (
-                <option key={f.id} value={f.id}>
-                  {f.nome}
-                </option>
-              ))}
-            </select>
+              Reconhecimento Facial
+            </button>
+
+            {isCameraOpen && (
+              <div className="space-y-2">
+                <video 
+                  ref={videoRef} 
+                  autoPlay 
+                  playsInline 
+                  className="w-full h-auto border rounded"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={recognizeFace}
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded"
+                  >
+                    Reconhecer
+                  </button>
+                  <button
+                    onClick={closeCamera}
+                    className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            )}
+
 
             <input
               type="time"
@@ -186,7 +418,10 @@ export default function FormModalAssiduidade() {
                 {loading ? 'Salvando...' : 'Salvar'}
               </button>
               <button
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  setOpen(false);
+                  closeCamera();
+                }}
                 className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded"
               >
                 Cancelar
@@ -198,25 +433,99 @@ export default function FormModalAssiduidade() {
         </div>
       )}
 
-      {/* Tabela */}
+      {/* Modal para cadastrar novos rostos */}
+      {isRegisteringFace && isCameraOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96 space-y-4">
+            <h2 className="text-xl font-semibold text-gray-800">Cadastrar Novo Rosto</h2>
+            
+            <video 
+              ref={videoRef} 
+              autoPlay 
+              playsInline 
+              className="w-full h-auto border rounded"
+            />
+            
+            <input
+              type="text"
+              placeholder="Nome do Funcionário"
+              value={newFaceName}
+              onChange={(e) => setNewFaceName(e.target.value)}
+              className="w-full border px-3 py-2 rounded"
+              required
+            />
+            
+            <div className="flex gap-2">
+              <button
+                onClick={registerNewFace}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded"
+                disabled={!newFaceName}
+              >
+                Cadastrar Rosto
+              </button>
+              <button
+                onClick={closeCamera}
+                className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded"
+              >
+                Cancelar
+              </button>
+            </div>
+            
+            {error && <p className="text-red-600 text-sm">{error}</p>}
+          </div>
+        </div>
+      )}
+
+      {/* Modal para registrar saída */}
+      {isRegisteringExit && isCameraOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96 space-y-4">
+            <h2 className="text-xl font-semibold text-gray-800">Registrar Saída</h2>
+            
+            <video 
+              ref={videoRef} 
+              autoPlay 
+              playsInline 
+              className="w-full h-auto border rounded"
+            />
+            
+            <div className="flex gap-2">
+              <button
+                onClick={recognizeFace}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded"
+              >
+                Reconhecer
+              </button>
+              <button
+                onClick={closeCamera}
+                className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded"
+              >
+                Cancelar
+              </button>
+            </div>
+            
+            {error && <p className="text-red-600 text-sm">{error}</p>}
+          </div>
+        </div>
+      )}
+
       <div className="overflow-auto bg-white rounded shadow">
         <table className="min-w-full divide-y divide-gray-200 text-sm">
-          <thead className="bg-gray-50">
-            <tr>
+          <thead className="bg-gray-50 px-10">
+            <tr className=''>
               <th className="px-4 py-2">Funcionário</th>
-              <th className="px-4 py-2">Entrada</th>
+              <th className="px-1 py-2">Entrada</th>
               <th className="px-4 py-2">Saída</th>
               <th className="px-4 py-2">Data</th>
               <th className="px-4 py-2">Duração</th>
-              <th className="px-4 py-2">Ação</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-100 ">
             {assiduidadeList.map((item) => (
-              <tr key={item.id} className="hover:bg-gray-50">
-                <td className="px-4 py-2">{item.funcionario_nome}</td>
-                <td className="px-4 py-2">{item.entrada}</td>
-                <td className="px-4 py-2">
+              <tr key={item.id} className="hover:bg-gray-50 mx-24">
+                <td className="px-10 py-2">{item.funcionario_nome}</td>
+                <td className="px-15 py-2">{item.entrada}</td>
+                <td className="px-10 py-2">
                   {editingId === item.id ? (
                     <input
                       type="time"
@@ -230,27 +539,7 @@ export default function FormModalAssiduidade() {
                 </td>
                 <td className="px-4 py-2">{item.data}</td>
                 <td className="px-4 py-2">{item.duracao || '-'}</td>
-                <td className="px-4 py-2">
-                  {editingId === item.id ? (
-                    <button
-                      onClick={handleSaidaEdit}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-                      disabled={loading}
-                    >
-                      {loading ? 'Atualizando...' : 'Atualizar'}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        setEditingId(item.id);
-                        setEditedSaida(item.saida || '');
-                      }}
-                      className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded"
-                    >
-                      Editar
-                    </button>
-                  )}
-                </td>
+                
               </tr>
             ))}
           </tbody>

@@ -14,35 +14,16 @@ const AdminDashboard = () => {
   const [totalFaltas, setTotalFaltas] = useState(0);
   const [totalPresencas, setTotalPresencas] = useState(0);
   const [departamentos, setDepartamentos] = useState([]);
-  const [cargos, setCargos] = useState([]);
 
-  useEffect(() => {
-    fetchDados();
-  }, []);
-
-  const fetchDados = async () => {
-    const resFunc = await fetch('http://127.0.0.1:8000/api/funcionarios/');
-    const dataFunc = await resFunc.json();
-    setFuncionarios(dataFunc);
-    setAtivos(dataFunc.filter((f: any) => f.ativo).length);
-    setInativos(dataFunc.filter((f: any) => !f.ativo).length);
-
-    const resDisp = await fetch('http://127.0.0.1:8000/api/dispensas/');
-    setTotalDispensas((await resDisp.json()).length);
-
-    const resFaltas = await fetch('http://127.0.0.1:8000/api/faltas/');
-    setTotalFaltas((await resFaltas.json()).length);
-
-    const resPresencas = await fetch('http://127.0.0.1:8000/api/assiduidade/');
-    setTotalPresencas((await resPresencas.json()).length);
-
-    const resDept = await fetch('http://127.0.0.1:8000/api/departamentos/');
-    setDepartamentos(await resDept.json());
-
-    const resCargos = await fetch('http://127.0.0.1:8000/api/cargos/');
-    setCargos(await resCargos.json());
-  };
-
+ useEffect(() => {
+     fetch('http://localhost:8000/api/leaves/all/')
+       .then(res => res.json())
+       .then(json => {
+         const dispensas = json.message || []
+         setTotalDispensas(dispensas.length)})
+       .catch(err => console.error(err))
+   }, [])
+  
   const chartData = {
     labels: ['Ativos', 'Inativos'],
     datasets: [
@@ -78,48 +59,7 @@ const AdminDashboard = () => {
         ))}
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-xl font-semibold mb-4 text-gray-800">Distribuição Ativos/Inativos</h3>
-        <div className="w-full max-w-xs mx-auto">
-          <Doughnut data={chartData} />
-        </div>
-      </div>
 
-      {/* Dados Organizacionais */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* Departamentos */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-xl font-semibold mb-2 text-gray-800">Departamentos</h3>
-          {departamentos.length === 0 ? (
-            <p className="text-gray-500">Nenhum departamento registrado.</p>
-          ) : (
-            <ul className="space-y-2">
-              {departamentos.map((d: any, i: number) => (
-                <li key={i} className="text-gray-700">
-                  <span className="font-medium">{d.nome}</span> – {d.descricao}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        {/* Cargos e Chefias */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-xl font-semibold mb-2 text-gray-800">Cargos</h3>
-          {cargos.length === 0 ? (
-            <p className="text-gray-500">Nenhum cargo registrado.</p>
-          ) : (
-            <ul className="space-y-2">
-              {cargos.map((c: any, i: number) => (
-                <li key={i} className="text-gray-700">
-                  <span className="font-medium">{c.titulo}</span>{' '}
-                  {c.e_chefe && <span className="text-sm text-blue-600">(Chefia)</span>}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </div>
     </div>
   );
 };

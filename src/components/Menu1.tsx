@@ -1,34 +1,29 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const menuItems = [
+const menuItems1 = [
   {
     title: "MENU",
     items: [
       {
         icon: "/home.png",
         label: "Home",
-        href: "/admin",
-      },
-      {
-        icon: "/student.png",
-        label: "Funcionário",
-        href: "/list/funciona",
-      },
-      {
-        icon: "/lesson.png",
-        label: "Dispensas",
-        href: "/list/dispensas",
+        href: "/funcionarios",
       },
       {
         icon: "/attendance.png",
-        label: "Assiduidade",
-        href: "/list/assiduidade",
+        label: "Minha Assiduidade",
+        href: "/menu/assiduidade",
+      },
+      {
+        icon: "/lesson.png",
+        label: "Pedir Dispensas",
+        href: "/menu/pedir_dispensa",
       },
       {
         icon: "/treinamento.png",
-        label: "Formações",
-        href: "/list/Formacoes",
+        label: "Minhas Formações",
+        href: "/menu/formacoes",
       },
       {
         icon: "/diagrama.png",
@@ -59,10 +54,10 @@ const menuItems = [
   },
 ];
 
-const Menu = () => {
+const Menu1 = () => {
   return (
     <div className="mt-4 text-sm">
-      {menuItems.map((i) => (
+      {menuItems1.map((i) => (
         <div className="flex flex-col gap-2" key={i.title}>
           <span className="hidden lg:block text-gray-400 font-light my-4">
             {i.title}
@@ -86,4 +81,4 @@ const Menu = () => {
   );
 };
 
-export default Menu;
+export default Menu1;

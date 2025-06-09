@@ -1,133 +1,77 @@
-'use client';
-import { useState, useEffect } from 'react';
+"use client";
 
-export default function FormacaoForm() {
-  const [formacao, setFormacao] = useState({
-    titulo: '',
-    descricao: '',
-    data_inicio: '',
-    data_fim: '',
-    local: '',
-    funcionario_id: '', // Agora é o ID de um único funcionário
-  });
+import { date } from "zod";
+import { columns, Courses } from "./columns";
+import CoursesPage from "./data-table";
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
 
-  const [funcionarios, setFuncionarios] = useState([]);  // Lista de funcionários
+  //Validating...
+  if (isNaN(date.getDate())) {
+    console.error("Data inválida:", date);
+  }
 
-  // Carregar os funcionários ao carregar a página
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = String(date.getFullYear());
+
+  const finish_date = `{day}/${month}/${year}`;
+
+  return `${day}/${month}/${year}`;
+}
+
+async function getData(): Promise<Courses[]> {
+  try {
+    const response = await fetch("http://localhost:8000/api/get_courses/");
+    const data = await response.json();
+    const message = data.message;
+
+    console.log(message);
+
+    // Handle both array and single object cases
+
+    const date = new Date("01-02-2025");
+    // console.log('Date:', date)
+
+    const coursesArray = Array.isArray(message) ? message : [message];
+
+    return coursesArray.map((course: any) => ({
+      id: course.id,
+      course_name: course.courses,
+      status: "pending",
+      course_description: course.description,
+      course_init_date: formatDate(course.init_date),
+      course_finish_date: formatDate(course.finish_date),
+      course_instructors: course.instructors,
+      course_requirements: course.requirements,
+    }));
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    return [];
+  }
+}
+
+import React, { useEffect, useState } from "react";
+
+export default function DemoPage() {
+  const [data, setData] = useState<Courses[]>([]);
+
   useEffect(() => {
-    const fetchFuncionarios = async () => {
-      const res = await fetch('http://127.0.0.1:8000/api/funcionarios/');  // Endpoint que retorna todos os funcionários
-      const data = await res.json();
-      setFuncionarios(data);
-    };
-
-    fetchFuncionarios();
+    getData().then(setData);
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormacao({ ...formacao, [name]: value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    try {
-      const res = await fetch('http://127.0.0.1:8000/api/formacoes/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formacao),
-      });
-
-      if (!res.ok) {
-        throw new Error('Erro ao cadastrar formação');
-      }
-
-      alert('Formação cadastrada com sucesso!');
-      setFormacao({
-        titulo: '',
-        descricao: '',
-        data_inicio: '',
-        data_fim: '',
-        local: '',
-        funcionario_id: '',
-      });
-    } catch (error) {
-      console.error(error);
-      alert('Erro ao cadastrar formação');
-    }
-  };
-
   return (
-    <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded shadow">
-      <h1 className="text-2xl font-bold mb-6">Cadastrar Formação</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="titulo"
-          placeholder="Título"
-          value={formacao.titulo}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-          required
-        />
-        <textarea
-          name="descricao"
-          placeholder="Descrição"
-          value={formacao.descricao}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-          required
-        />
-        <input
-          type="date"
-          name="data_inicio"
-          value={formacao.data_inicio}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-          required
-        />
-        <input
-          type="date"
-          name="data_fim"
-          value={formacao.data_fim}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-          required
-        />
-        <input
-          type="text"
-          name="local"
-          placeholder="Local"
-          value={formacao.local}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-          required
-        />
-        <select
-          name="funcionario_id"
-          value={formacao.funcionario_id}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-          required
-        >
-          <option value="">Selecione um Funcionário</option>
-          {funcionarios.map((funcionario: any) => (
-            <option key={funcionario.id} value={funcionario.id}>
-              {funcionario.username}  {/* Aqui você pode personalizar o nome do funcionário */}
-            </option>
-          ))}
-        </select>
-
-        <button
-          type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
-        >
-          Cadastrar
-        </button>
-      </form>
+    <div>
+      <h1
+        className="text-center text-4xl 
+      font-bold py-10 bg-gradient-to-r from-[#3ffc2f] to-[#2f83c3] 
+      bg-clip-text text-transparent "
+      >
+        Gerenciador de Cursos{" "}
+      </h1>
+      <div className="container mx-auto py-10 bg-white ">
+        <CoursesPage columns={columns} data={data} />
+      </div>
     </div>
   );
 }

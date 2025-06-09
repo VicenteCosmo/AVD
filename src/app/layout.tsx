@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import AdminPage from "./(dashboard)/admin/page";
-
 const inter = Inter({ subsets: ["latin"] });
-
+import { AuthProvider } from "./context/AuthContext";
 export const metadata: Metadata = {
   title: "AVD",
-  description: "Next.js AVD Management System",
+  description: "Gestão Recursos Humanos",
 };
 
 export default function RootLayout({
@@ -16,9 +14,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <html lang="en">
+      <html lang="pt-BR">
         <body className={inter.className}>
+          <AuthProvider>
           {children}
+          </AuthProvider>
+          
         </body>
       </html>
   );

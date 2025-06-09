@@ -1,8 +1,9 @@
-import Menu from "@/components/Menu";
-import Navbar from "@/components/Navbar";
+import Menu1 from "@/components/Menu1";
+import Navbar from "@/components/Navbar1";
 import Image from "next/image";
 import Link from "next/link";
-
+import { useRouter } from 'next/navigation';
+import { AuthProvider } from "../context/AuthContext";
 export default function DashboardLayout({
   children,
 }: Readonly<{
@@ -10,7 +11,8 @@ export default function DashboardLayout({
 }>) {
   return (
     <div className="h-screen flex">
-      {/* LEFT */}
+
+      
       <div className="w-[20%] md:w-[8%] lg:w-[20%] xl:w-[10%] p-1">
         <Link
           href="/"
@@ -18,9 +20,8 @@ export default function DashboardLayout({
         >
           <Image src="/Onono.png" alt="logo" width={150} height={180} />
         </Link>
-        <Menu />
+        <Menu1/>
       </div>
-      {/* RIGHT */}
       <div className="w-[86%] md:w-[92%] lg:w-[84%] xl:w-[86%] bg-[#F7F8FA] overflow-scroll flex flex-col">
         <Navbar />
         {children}

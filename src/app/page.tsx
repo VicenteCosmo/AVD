@@ -1,8 +1,9 @@
-import DashboardLayout from "./(dashboard)/layout"
-const Homepage = () => {
+import React from 'react'
+
+export default async function page() {
+  const res= await fetch('https://api.github.com/users/defunkt');
+  const dado= await res.json
   return (
-    <div className=''></div>
+    <div>{dado.name}</div>
   )
 }
-
-export default Homepage
