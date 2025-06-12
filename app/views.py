@@ -37,27 +37,19 @@ from .serializers import (
     FuncionarioSerializer, FuncionarioRegisterSerializer,
     SetPasswordSerializer, VerifyOTPSerializer,
     AssiduidadeSerializer, CourseSerializer, CourseUserSerializer,
-    FaceImageSerializer, LeaveRequestSerializer
+    FaceImageSerializer, LeaveRequestSerializer, #RegistrarSerializers
 )
 
 
-# ——— FUNCIONÁRIOS + OTP + SENHA ——————————————————————————
-
+###class registrar_empresa(generics.CreateAPIView):
+    #serializer_class=RegistrarSerializers
+    ##permission_classes=[AllowAny]
 class FuncionarioCreateView(generics.CreateAPIView):
-    """
-    POST /api/funcionarios/ 
-    Só admin (session + JWT) pode criar funcionário,
-    gera e envia OTP por email.
-    """
+    
     serializer_class = FuncionarioRegisterSerializer
     permission_classes = [AllowAny] 
-
-
 class EnviarOTPView(APIView):
-    """
-    POST /api/funcionarios/send-otp/
-    Usuário (AllowAny) solita novo OTP por email.
-    """
+   
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -76,7 +68,7 @@ class EnviarOTPView(APIView):
 
         send_mail(
             subject="Seu código OTP",
-            message=f"Olá {funcionario.nome}, seu código OTP é: {codigo}",
+            message=f"Olá {funcionario.nome}, Seja Bem-Vindo ao sistema AVD , foste cadastrado com sucesso. O seu código OTP é: {codigo} Faça a verificação para ter a sua conta activa",
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[funcionario.email],
             fail_silently=False,
@@ -87,10 +79,7 @@ class EnviarOTPView(APIView):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def verificar_otp(request):
-    """
-    POST /api/funcionarios/verificar/
-    Valida o OTP enviado por email.
-    """
+    
     serializer = VerifyOTPSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
@@ -115,10 +104,7 @@ def verificar_otp(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def set_password(request):
-    """
-    POST /api/funcionarios/set-password/
-    Após OTP validado, cria ou altera a senha do funcionário.
-    """
+
     serializer = SetPasswordSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
@@ -150,7 +136,6 @@ def courses_list(request):
         serializer = CourseSerializer(courses, many=True)
         return Response({'message': serializer.data})
 
-    # POST para criar novo curso
     serializer = CourseSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -173,7 +158,6 @@ def enroll_in_course(request, id):
         return Response({'error': 'Curso não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
     course.enrolled_users.add(request.user)
     return Response({'message': 'Inscrição feita com sucesso!'}, status=status.HTTP_200_OK)
-# Atualiza curso existente
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsAdminUser])
 def update_course(request, id):
@@ -207,7 +191,6 @@ class FuncionarioRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = FuncionarioSerializer
     permission_classes = [AllowAny] 
 
-# Assiduidade
 class AssiduidadeList(generics.ListCreateAPIView):
     queryset = Assiduidade.objects.all()
     serializer_class = AssiduidadeSerializer
@@ -222,7 +205,6 @@ class AssiduidadeRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = AssiduidadeSerializer
     permission_classes = [AllowAny] 
 
-# Reconhecimento Facial
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @parser_classes([JSONParser])
@@ -232,7 +214,6 @@ def facial_recognition(request):
         if not image_data:
             return Response({'error': 'Imagem não fornecida'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # extrai base64
         if ';base64,' in image_data:
             _, imgstr = image_data.split(';base64,')
         else:
@@ -255,15 +236,12 @@ def facial_recognition(request):
 
             known_encoding = np.frombuffer(funcionario.face_encoding.encoding, dtype=np.float64)
 
-            # calcula distância entre vetores
             distance = face_recognition.face_distance([known_encoding], input_encoding)[0]
 
-            # mantém o menor distance
             if best_distance is None or distance < best_distance:
                 best_distance = distance
                 best_match_id = funcionario.id
 
-        # se a melhor distância for menor que tolerance, devolve o id
         if best_distance is not None and best_distance <= tolerance:
             return Response({'funcionario_id': best_match_id, 'distance': best_distance})
 
@@ -272,21 +250,17 @@ def facial_recognition(request):
 
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    # Registro de Rosto
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser, JSONParser])
 def register_face(request):
     try:    
-        print("📥 Dados recebidos no POST:")
+        print(" Dados recebidos no POST:")
         print(request.data)
-        # Verificar se é por formulário ou JSON
         if request.FILES.get('image'):
-            # Upload de arquivo
             image_file = request.FILES['image']
             funcionario = request.user          
         else:
-            # Imagem base64 via JSON
             image_data = request.data.get('image')
             nome = request.data.get('funcionario_')
             
@@ -344,17 +318,17 @@ class CreateLeaveRequestAPIView(CreateAPIView):
     parser_classes = [MultiPartParser, FormParser]
 
     def perform_create(self, serializer):
-        # força o uso do usuário autenticado como "funcionario"
         leave = serializer.save(funcionario=self.request.user)
-        # opcional: poderia enviar notificação ao admin aqui
 
 @method_decorator(csrf_exempt, name='dispatch')
-# 2) Listar apenas as dispensas do próprio usuário
 class ListMyLeavesAPIView(ListAPIView):
     serializer_class = LeaveRequestSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        user = self.request.user
+        print("Usuário autenticado:", user)
+        print("ID:", user.id)
         return Dispensas.objects.filter(funcionario=self.request.user).order_by('-created_at')
 
 
@@ -376,12 +350,30 @@ def UpdateLeaveStatusAPIView(request, id):
 
     status_ = request.data.get('status')
     comment = request.data.get('admin_comentario', '')
-
-    if status_ not in ['approved', 'rejected']:
+    nome=request.data.get('funcionario_nome')    
+    if status_ not in ['aprovado', 'rejeitado']:
+        print(f"Status inválido recebido: {status_}")
         return Response({'error': 'Status inválido.'}, status=status.HTTP_400_BAD_REQUEST)
-
+        
     leave.status = status_
     leave.admin_comentario = comment
     leave.save(update_fields=['status', 'admin_comentario'])
+    serializer = LeaveRequestSerializer(leave)
+    if status_ == 'aprovado':
+        send_mail(
+            subject='Sua dispensa foi aprovada',
+            message=f"Olá ,\n\nSua dispensa foi aprovada.\n\nComentário do administrador:\n{comment}",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[leave.funcionario.email],
+            fail_silently=False
+        )
+    elif status_ =='rejeitado':
+        send_mail(
+            subject='Sua dispensa foi Reprovada',
+            message=f"Olá Caríssimo(a) ,\n\nSua dispensa foi Rejectada.\n\nComentário do administrador:\n{comment}",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[leave.funcionario.email],
+            fail_silently=False
+        )
     serializer = LeaveRequestSerializer(leave)
     return Response({'message': 'Atualizado com sucesso.', 'data': serializer.data})

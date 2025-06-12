@@ -6,42 +6,36 @@ from django.conf import settings
 
 from .models import (
     Funcionario, Assiduidade,
-    FaceImage, Course, Dispensas
+    FaceImage, Course, Dispensas # Registrar_Empresa
 )
 
-
-# ——— 1) FUNCIONÁRIO ——————————————————————————————
+#class RegistrarSerializers(serializers.ModelSerializer):
+ #   class Meta:
+  #     model=Registrar_Empresa
+   #    fields='__all__'
 
 class FuncionarioSerializer(serializers.ModelSerializer):
-    """Usado para listar/detalhar funcionários"""
     class Meta:
         model = Funcionario
         fields = ['id', 'nome', 'email','is_admin']
 
 
 class FuncionarioRegisterSerializer(serializers.ModelSerializer):
-    """
-    Usado no endpoint POST /api/funcionarios/
-    Cria o funcionário (sem senha), gera OTP e envia por email.
-    """
     class Meta:
         model = Funcionario
         fields = ['id', 'nome', 'email']
         read_only_fields = ['id']
 
     def create(self, validated_data):
-        # 1) Cria o usuário com senha inutilizável
         funcionario = Funcionario.objects.create_user(
             email=validated_data['email'],
             nome=validated_data['nome'],
             password=None
         )
-        # 2) Gera o OTP via método do modelo
         codigo = funcionario.gerar_otp()
-        # 3) Envia email com o código
         send_mail(
             subject="Seu código OTP",
-            message=f"Olá {funcionario.nome}, seu código OTP é: {codigo}",
+            message=f"Olá {funcionario.nome}, seu código OTP é: {codigo} http://localhost:3000//verificar-otp?email={funcionario.email}",
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[funcionario.email],
             fail_silently=False,
@@ -50,31 +44,22 @@ class FuncionarioRegisterSerializer(serializers.ModelSerializer):
 
 
 class VerifyOTPSerializer(serializers.Serializer):
-    """
-    Usado em POST /api/funcionarios/verificar/
-    Apenas valida email + otp.
-    """
+    
     email = serializers.EmailField()
     otp = serializers.CharField(max_length=6)
 
 
 class SetPasswordSerializer(serializers.Serializer):
-    """
-    Usado em POST /api/funcionarios/set-password/
-    Valida email, otp e nova senha.
-    """
+    
     email = serializers.EmailField()
     senha = serializers.CharField(min_length=6, write_only=True)
 
     def validate(self, attrs):
-        # 1) Busca funcionário
         try:
             funcionario = Funcionario.objects.get(email=attrs['email'])
         except Funcionario.DoesNotExist:
             raise serializers.ValidationError("Funcionário não existe.")
-        # 2) Verifica OTP usando método do modelo
         
-        # 3) Armazena o objeto para uso em .save()
         attrs['funcionario_obj'] = funcionario
         return attrs
 
@@ -86,7 +71,6 @@ class SetPasswordSerializer(serializers.Serializer):
         return funcionario
 
 
-# ——— 2) CURSOS ————————————————————————————————————
 
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
@@ -110,7 +94,6 @@ class CourseUserSerializer(CourseSerializer):
         return obj.enrolled_users.filter(pk=user.pk).exists()
 
 
-# ——— 3) ASSIDUIDADE —————————————————————————————————
 
 class AssiduidadeSerializer(serializers.ModelSerializer):
     funcionario_nome = serializers.CharField(source='funcionario.nome', read_only=True)
@@ -134,7 +117,6 @@ class FaceImageSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at']
 
 
-# ——— 5) DISPENSAS (Leave Requests) ————————————————————
 
 class LeaveRequestSerializer(serializers.ModelSerializer):
     funcionario_nome = serializers.CharField(source='funcionario.nome', read_only=True)

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django_otp',
     'django_otp.plugins.otp_email',   # envio de OTP por e‑mail
     'app',
+    'app1',
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt',
@@ -46,7 +47,6 @@ INSTALLED_APPS = [
    #'rest_framework_simplejwt.token_blacklist',
 
 ]
-# Use o backend SMTP do Django
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # Configurações do Gmail
@@ -105,8 +105,12 @@ WSGI_APPLICATION = 'recursos.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'avd',
+        'USER': 'postgres',
+        'PASSWORD': 'Aluno2026',
+        'HOST': 'localhost',      # ou IP do servidor
+        'PORT': '5432',           
     }
 }
 

@@ -1,5 +1,9 @@
+#Algumas dependencias para o nosso backend
 djangorestframework
 psycopg2-binary
 dj-database-url
 django-cors-headers
 django_otp
+face_recognition
+django
+opencv

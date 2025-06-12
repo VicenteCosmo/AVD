@@ -11,7 +11,6 @@ import uuid
 import os
 from datetime import datetime, time, timedelta
 import random
-# ———————————————— User Manager ————————————————
 class FuncionarioManager(BaseUserManager):
     def create_user(self, email, nome, password=None, **extra_fields):
         if not email:
@@ -28,7 +27,6 @@ class FuncionarioManager(BaseUserManager):
         extra_fields.setdefault('is_admin', True)
         return self.create_user(email, nome, password, **extra_fields)
 
-# ———————————————— Usuário (Funcionário) ————————————————
 class Funcionario(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     nome = models.CharField(max_length=255)
@@ -47,7 +45,7 @@ class Funcionario(AbstractBaseUser, PermissionsMixin):
         codigo = str(random.randint(100000, 999999))
         OTP.objects.create(funcionario=self, codigo=codigo)
         return codigo
-# ———————————————— OTP ————————————————
+
 class OTP(models.Model):
     funcionario = models.ForeignKey(Funcionario, on_delete=models.CASCADE)
     codigo = models.CharField(max_length=6)
@@ -59,12 +57,6 @@ class OTP(models.Model):
 
     def __str__(self):
         return f"{self.funcionario.email} - {self.codigo}"
-
-
-# ----------------------------
-# 2) Cursos
-# ----------------------------
-
 class Course(models.Model):
     STATUS_CHOICES = [
         ("pending", "Pendente"),
@@ -87,11 +79,6 @@ class Course(models.Model):
     def __str__(self):
         return self.course_name
 
-
-# ----------------------------
-# 3) Reconhecimento Facial
-# ----------------------------
-
 def face_image_path(instance, filename):
     ext = filename.split(".")[-1]
     filename = f"{uuid.uuid4()}.{ext}"
@@ -105,7 +92,6 @@ class FaceEncoding(models.Model):
     encoding = models.BinaryField()
 
     def set_encoding(self, encoding_array: np.ndarray):
-        # Salva o array numpy como bytes
         self.encoding = encoding_array.tobytes()
 
     def get_encoding(self) -> np.ndarray:
@@ -119,11 +105,6 @@ class FaceImage(models.Model):
     image = models.ImageField(upload_to=face_image_path)
     created_at = models.DateTimeField(auto_now_add=True)
 
-
-# ----------------------------
-# 4) Assiduidade
-# ----------------------------
-
 class Assiduidade(models.Model):
     funcionario = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="assiduidades"
@@ -134,7 +115,6 @@ class Assiduidade(models.Model):
     duracao = models.DurationField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        # Se houver horário de saída, calcula duração
         if self.saida:
             ent = (
                 time.fromisoformat(self.entrada)
@@ -153,16 +133,11 @@ class Assiduidade(models.Model):
             self.duracao = dt_sai - dt_ent
         super().save(*args, **kwargs)
 
-
-# ----------------------------
-# 5) Dispensas (Solicitação de Faltas)
-# ----------------------------
-
 class Dispensas(models.Model):
     STATUS_CHOICES = [
-        ("pending", "Pendente"),
-        ("approved", "Aprovada"),
-        ("rejected", "Rejeitada"),
+        ("pendente", "Pendente"),
+        ( "aprovado","Aprovado"),
+        ( "rejeitado","Rejeitado"),
     ]
 
     funcionario = models.ForeignKey(
@@ -171,10 +146,26 @@ class Dispensas(models.Model):
     motivo = models.TextField()
     inicio = models.DateField()
     fim = models.DateField()
-    justificativo = models.FileField(upload_to="justifications/", blank=True, null=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
+    justificativo = models.FileField(upload_to="justificativos/", blank=True, null=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pendente")
     admin_comentario = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.funcionario.email} - {self.status}"
+class Skill(models.Model):
+    funcionario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="skills")
+    titulo = models.CharField(max_length=200)
+    instituicao = models.CharField(max_length=200)
+    data_inicio = models.DateField()
+    data_fim = models.DateField(null=True, blank=True)
+    nivel = models.CharField(
+        max_length=20,
+        choices=[("iniciante","Iniciante"),("intermediario","Intermediário"),("avancado","Avançado")],
+        default="intermediario"
+    )
+    descricao = models.TextField(blank=True)
+    comprovante = models.FileField(upload_to="skills_certificados/", blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.titulo} ({self.instituicao})"

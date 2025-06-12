@@ -7,16 +7,16 @@ from .views import (
     ListMyLeavesAPIView,
     ListAllLeavesAPIView,
     UpdateLeaveStatusAPIView,
+    #registrar_empresa
 )
 urlpatterns = [
-    # ——— FUNCIONÁRIOS & OTP & SENHA ——————————————————————————
-    # Cria funcionário (só admin pode): gera e envia OTP
+    #path('cadastrar/',registrar_empresa.as_view(), name='cadastro-empresa'),
+    
     path(
         'funcionarios/',
         views.FuncionarioCreateView.as_view(),
         name='funcionario-create'
     ),
-    # (Opcional) Listar/atualizar/remover funcionários, se você quiser:
     path(
         'funcionarios/all/',
         views.FuncionarioListCreate.as_view(),
@@ -28,25 +28,21 @@ urlpatterns = [
         name='funcionario-detail'
     ),
 
-    # Login inicial: envia novo OTP
     path(
         'funcionarios/send-otp/',
         views.EnviarOTPView.as_view(),
         name='funcionario-send-otp'
     ),
-    # Verifica o código OTP
     path(
         'funcionarios/verify-otp/',
         views.verificar_otp,
         name='funcionario-verify-otp'
     ),
-    # Cria a senha após OTP validado
     path(
         'funcionarios/set-password/',
         views.set_password,
         name='funcionario-set-password'
     ),
-    # Retorna dados do funcionário autenticado
     path(
         'funcionarios/me/',
         views.perfil_do_funcionario,
@@ -54,7 +50,6 @@ urlpatterns = [
     ),
 
 
-    # ——— ASSIDUIDADE ——————————————————————————————————————
     path(
         'assiduidade/',
         views.AssiduidadeListCreate.as_view(),
@@ -70,7 +65,6 @@ urlpatterns = [
         views.AssiduidadeList.as_view(),
         name='assiduidade-l-create'
     ),
-    # ——— CURSOS ————————————————————————————————————————————
     path(
         'get_courses/',
         views.courses_list,
@@ -97,7 +91,6 @@ urlpatterns = [
         name='courses-enroll'
     ),
 
-    # ——— RECONHECIMENTO FACIAL —————————————————————————————
     path(
         'facial_recognition/',
         views.facial_recognition,
@@ -119,7 +112,6 @@ urlpatterns = [
         name='face-image-detail'
     ),
 
-    # ——— DISPENSAS (Leave Requests) —————————————————————————
     path(
         'dispensa/create/',
         CreateLeaveRequestAPIView.as_view(),
