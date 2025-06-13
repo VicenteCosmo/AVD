@@ -42,15 +42,10 @@ export default function FormModalAssiduidade() {
   const streamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
-    fetchFuncionarios();
     fetchAssiduidade();
   }, []);
 
-  const fetchFuncionarios = async () => {
-    const res = await fetch('http://127.0.0.1:8000/api/funcionarios/');
-    const data = await res.json();
-    setFuncionarios(data);
-  };
+  
 
   const fetchAssiduidade = async () => {
     const res = await fetch('http://127.0.0.1:8000/api/assiduidade/todos/');
@@ -83,10 +78,8 @@ export default function FormModalAssiduidade() {
         throw new Error(errorData.error || 'Erro ao registrar entrada');
       }
 
-      // Atualizar lista imediatamente após sucesso
       await fetchAssiduidade();
       
-      // Fechar modal apenas após atualização
       setOpen(false);
       setFormData({ funcionario: '', entrada: '', data: '' });
     } catch (err: any) {
@@ -178,7 +171,6 @@ export default function FormModalAssiduidade() {
     setIsRegisteringExit(false);
   };
 
-  // Reconhecimento facial
   const recognizeFace = async () => {
     const imageData = captureImage();
     if (!imageData) {
@@ -187,25 +179,22 @@ export default function FormModalAssiduidade() {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/facial_recognition/', {
+      const response = await fetch('http://127.0.0.1:8000/api/facial/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image: imageData }),
       });
 
       const data = await response.json();
-      
+      console.log(data)
       if (response.ok && data.funcionario_id) {
-        // Preencher automaticamente data e hora atuais
         const now = new Date();
-        const hora = now.toTimeString().slice(0, 5); // HH:MM
+        const hora = now.toTimeString().slice(0, 5); 
         const dataAtual = now.toISOString().split('T')[0]; // YYYY-MM-DD
 
         if (isRegisteringExit) {
-          // Registrar saída automaticamente
           await registrarSaida(data.funcionario_id, hora);
         } else {
-          // Preencher formulário de entrada
           setFormData({
             funcionario: data.funcionario_id.toString(),
             entrada: hora,
@@ -213,50 +202,12 @@ export default function FormModalAssiduidade() {
           });
         }
 
-        // Não fechar o modal aqui!
         closeCamera();
       } else {
         setError(data.error || 'Funcionário não reconhecido');
       }
     } catch (err) {
       setError('Erro no reconhecimento facial: ' + (err as Error).message);
-    }
-  };
-
-  // Cadastro de nova face
-  const registerNewFace = async () => {
-    if (!newFaceName) {
-      setError('Digite o nome do funcionário');
-      return;
-    }
-
-    const imageData = captureImage();
-    if (!imageData) {
-      setError('Falha ao capturar imagem');
-      return;
-    }
-
-    try {
-      const response = await fetch('http://localhost:8000/api/register_face/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          name: newFaceName,
-          image: imageData 
-        }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        alert('Rosto cadastrado com sucesso!');
-        setNewFaceName('');
-        closeCamera();
-        fetchFuncionarios();
-      } else {
-        setError(data.error || 'Erro ao cadastrar rosto');
-      }
-    } catch (err) {
-      setError('Erro no cadastro facial: ' + (err as Error).message);
     }
   };
 
@@ -270,10 +221,8 @@ export default function FormModalAssiduidade() {
       );
 
       if (registro) {
-        // Atualizar registro existente
         await handleSaidaEdit(registro.id, horaSaida);
       } else {
-        // Criar novo registro de saída (caso não haja entrada)
         const now = new Date();
         const dataAtual = now.toISOString().split('T')[0];
         

@@ -4,5 +4,4 @@ const nextConfig = {
     remotePatterns: [{ hostname: "images.pexels.com" }],
   },
 };
-
 export default nextConfig;

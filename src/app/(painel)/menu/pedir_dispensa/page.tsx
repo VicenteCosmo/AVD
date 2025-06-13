@@ -20,7 +20,7 @@ export type Leave = {
   inicio: string;
   fim: string;
   justificativo: string | null;
-  status: "pending" | "approved" | "rejected";
+  status: "pendente" | "aprovada" | "rejeitada";
   admin_comentario: string | null;
   created_at: string;
   funcionario_nome: string;
@@ -35,21 +35,20 @@ function formatDate(dateString: string) {
 
 export default function EmployeeLeavesPage() {
   const { accessToken } = useContext(AuthContext);
-  const [leaves, setLeaves] = useState<Leave[]>([]);
-  const [reason, setReason] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [dispensa, setdispensa] = useState<Leave[]>([]);
+  const [motivo, setmotivo] = useState("");
+  const [inicio, setinicio] = useState("");
+  const [fim, setfim] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // busca as próprias dispensas
   useEffect(() => {
     if (!accessToken) return;
     fetch("http://localhost:8000/api/dispensa/my/", {
       headers: { Authorization: `Bearer ${accessToken}` },
     })
       .then((r) => r.json())
-      .then((j) => setLeaves(j.message || []))
+     .then((j) => setdispensa(Array.isArray(j.message) ? j.message : j))
       .finally(() => setLoading(false));
   }, [accessToken]);
 
@@ -57,10 +56,10 @@ export default function EmployeeLeavesPage() {
     if (e.target.files?.[0]) setFile(e.target.files[0]);
   };
 function calculateDays(start: string, end: string): number {
-  const startDate = new Date(start);
-  const endDate = new Date(end);
-  const diffTime = endDate.getTime() - startDate.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 para contar o primeiro dia
+  const inicio = new Date(start);
+  const fim = new Date(end);
+  const diffTime = fim.getTime() - inicio.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; 
   return isNaN(diffDays) ? 0 : diffDays;
 }
   const handleSubmit = async (e: FormEvent) => {
@@ -68,9 +67,9 @@ function calculateDays(start: string, end: string): number {
     if (!accessToken) return Swal.fire("Erro", "Faça login primeiro", "error");
 
     const body = new FormData();
-    body.append("motivo", reason);
-    body.append("inicio", startDate);
-    body.append("fim", endDate);
+    body.append("motivo", motivo);
+    body.append("inicio", inicio);
+    body.append("fim", fim);
     if (file) body.append("justificativo", file);
 
     const res = await fetch("http://localhost:8000/api/dispensa/create/", {
@@ -81,9 +80,8 @@ function calculateDays(start: string, end: string): number {
 
     if (!res.ok) return Swal.fire("Erro", "Falha ao enviar pedido", "error");
     const json = await res.json();
-    console.log("Resposta do backend:", json);
-    setLeaves((prev) => [json, ...prev]);
-    setReason(""); setStartDate(""); setEndDate(""); setFile(null);
+    setdispensa((prev) => [json, ...prev]);
+    setmotivo(""); setinicio(""); setfim(""); setFile(null);
     Swal.fire("Sucesso", "Pedido enviado!", "success");
   };
 
@@ -96,8 +94,8 @@ function calculateDays(start: string, end: string): number {
         <div>
           <label>Motivo</label>
           <textarea
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
+            value={motivo}
+            onChange={(e) => setmotivo(e.target.value)}
             required
             className="w-full border p-2 rounded"
           />
@@ -105,11 +103,11 @@ function calculateDays(start: string, end: string): number {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label>Data Início</label>
-            <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
+            <Input type="date" value={inicio} onChange={(e) => setinicio(e.target.value)} required />
           </div>
           <div>
             <label>Data Término</label>
-            <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} required />
+            <Input type="date" value={fim} onChange={(e) => setfim(e.target.value)} required />
           </div>
         </div>
         <div>
@@ -131,7 +129,7 @@ function calculateDays(start: string, end: string): number {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {leaves.map((l) => (
+          {dispensa.map((l) => (
             <TableRow key={l.id}>
               <TableCell>{l.motivo}</TableCell>
               <TableCell><span className="text-sm text-black-800">

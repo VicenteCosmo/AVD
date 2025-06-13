@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-
+import Swal from "sweetalert2";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -67,7 +67,42 @@ export default function VerificarOTP() {
 
       if (res.ok) {
         alert("Senha criada com sucesso! Faça login com email e senha.");
-        router.push("/login-com-senha");
+        const res = await fetch('http://localhost:8000/api/token/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: senha }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      localStorage.setItem('access_token', data.access);
+      localStorage.setItem('refresh_token', data.refresh);
+
+      const userRes = await fetch('http://localhost:8000/api/funcionarios/me/', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${data.access}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const user = await userRes.json();
+      console.log("Dados do usuário logado:", user);
+      if (!userRes.ok) throw new Error('Erro ao obter dados do usuário');
+
+      await Swal.fire({
+        title: 'Login realizado com sucesso!',
+        icon: 'success',
+      });
+
+      if (user.is_admin) {
+        router.push('/admin');
+      } else {
+        router.push('/funcionarios');
+      }
+
+    } 
       } else {
         const erro = await res.json();
         alert("Erro ao criar senha: " + JSON.stringify(erro));

@@ -29,7 +29,6 @@ export default function LoginComSenha() {
       localStorage.setItem('access_token', data.access);
       localStorage.setItem('refresh_token', data.refresh);
 
-      // Buscar informações do usuário logado
       const userRes = await fetch('http://localhost:8000/api/funcionarios/me/', {
         method: 'GET',
         headers: {
@@ -47,7 +46,6 @@ export default function LoginComSenha() {
         icon: 'success',
       });
 
-      // Redirecionamento baseado em superuser
       if (user.is_admin) {
         router.push('/admin');
       } else {

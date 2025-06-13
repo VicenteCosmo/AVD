@@ -151,7 +151,6 @@ export default function CoursesPage() {
       })
       const body = await resp.json()
       if (!resp.ok) throw new Error(JSON.stringify(body))
-      // Atualiza lista sem reload
       setCourses(prev => [body.message, ...prev])
       setIsDialogOpen(false)
       Swal.fire({ icon: 'success', title: 'Cadastrado com sucesso!' })

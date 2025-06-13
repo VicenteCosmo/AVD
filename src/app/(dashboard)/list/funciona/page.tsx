@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect, useMemo } from 'react'
-
+import Swal from "sweetalert2";
 interface TableData {
   columns: string[]
   rows: Record<string, any>[]
@@ -8,26 +8,20 @@ interface TableData {
 }
 
 export default function DatabaseManager() {
-  // Estados principais
   const [tables, setTables] = useState<string[]>([])
   const [selectedTable, setSelectedTable] = useState('')
   const [tableData, setTableData] = useState<TableData | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  
-  // Estados para CRUD
   const [editingId, setEditingId] = useState<number | string | null>(null)
   const [editFormData, setEditFormData] = useState<Record<string, any>>({})
   const [newRecordForm, setNewRecordForm] = useState<Record<string, any>>({})
   const [showCreateForm, setShowCreateForm] = useState(false)
-  
-  // Estados para paginação/filtro
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
   const [searchTerm, setSearchTerm] = useState('')
   const [sortConfig, setSortConfig] = useState<{key: string; direction: 'asc' | 'desc'} | null>(null)
 
-  // Busca todas as tabelas disponíveis
   useEffect(() => {
     const fetchTables = async () => {
       try {
@@ -48,7 +42,6 @@ export default function DatabaseManager() {
     fetchTables()
   }, [])
 
-  // Busca dados da tabela selecionada
   const fetchTableData = async () => {
     if (!selectedTable) return
 
@@ -66,7 +59,7 @@ export default function DatabaseManager() {
         `http://localhost:8000/tables/${selectedTable}/data/?${query}`
       )
       const data = await response.json()
-      
+      console.log(data)
       if (!response.ok) throw new Error(data.error || 'Failed to fetch table data')
       setTableData(data)
     } catch (err) {
@@ -77,18 +70,15 @@ export default function DatabaseManager() {
     }
   }
 
-  // Atualiza os dados quando os parâmetros mudam
   useEffect(() => {
     fetchTableData()
   }, [selectedTable, currentPage, pageSize, searchTerm, sortConfig])
 
-  // Inicia a edição de um registro
   const handleEditClick = (row: Record<string, any>) => {
     setEditingId(row.id)
     setEditFormData({...row})
   }
 
-  // Atualiza o formulário de edição
   const handleEditChange = (column: string, value: any) => {
     setEditFormData(prev => ({
       ...prev,
@@ -96,7 +86,6 @@ export default function DatabaseManager() {
     }))
   }
 
-  // Salva as alterações de um registro
   const handleUpdate = async () => {
     if (!editingId || !selectedTable) return
 
@@ -117,19 +106,17 @@ export default function DatabaseManager() {
       )
 
       const data = await response.json()
-      if (!response.ok) throw new Error(data.error || 'Failed to update record')
+      if (!response.ok) throw new Error(data.error || 'Falha')
 
-      // Atualiza os dados localmente
       await fetchTableData()
       setEditingId(null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update record')
+      setError(err instanceof Error ? err.message : 'Falha')
     } finally {
       setLoading(false)
     }
   }
 
-  // Exclui um registro
   const handleDelete = async (id: number | string) => {
     if (!confirm('Tem certeza que deseja excluir este registro permanentemente?')) return
 
@@ -158,36 +145,61 @@ export default function DatabaseManager() {
     }
   }
 
-  // Cria um novo registro
   const handleCreate = async () => {
-    if (!selectedTable) return
+  if (!selectedTable) return
 
-    try {
-      setLoading(true)
-      const response = await fetch(
-        `http://localhost:8000/data/${selectedTable}/`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newRecordForm)
-        }
-      )
+  try {
+    setLoading(true)
 
-      const data = await response.json()
-      if (!response.ok) throw new Error(data.error || 'Failed to create record')
+    const campos = Object.keys(newRecordForm)
+    const nome1 = campos.find(c => c.toLowerCase() === 'nome')
+    const email1 = campos.find(c => c.toLowerCase() === 'email')
 
-      // Recarrega os dados e limpa o formulário
+    if (nome1 && email1) {
+      const funcionarioCampos = {
+        nome: newRecordForm[nome1],
+        email: newRecordForm[email1],
+      }
+
+      const funcionarioResponse = await fetch('http://localhost:8000/api/funcionarios/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(funcionarioCampos),
+      })
+
+      const funcionarioData = await funcionarioResponse.json()
+      if (!funcionarioResponse.ok) throw new Error(funcionarioData.error || 'Funcionário já registrado')
+
+    }
+
+    const response = await fetch(`http://localhost:8000/data/${selectedTable}/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newRecordForm),
+    })
+
+    const data = await response.json()
+    if (!response.ok) throw new Error(data.error || 'Erro ao criar registro')
+    if(response.ok){
+      Swal.fire('Cadastrado', 'sucess')
+    }
+    if (!(nome1 && email1)) {
       await fetchTableData()
       setNewRecordForm({})
       setShowCreateForm(false)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create record')
-    } finally {
-      setLoading(false)
     }
+
+  } catch (err) {
+    setError(err instanceof Error ? err.message : 'Erro ao criar registro')
+  } finally {
+    setLoading(false)
   }
+}
+
 
   // Ordenação das colunas
   const requestSort = (key: string) => {
@@ -198,7 +210,6 @@ export default function DatabaseManager() {
     setSortConfig({ key, direction })
   }
 
-  // Paginação
   const totalPages = tableData?.total ? Math.ceil(tableData.total / pageSize) : 0
 
   return (
@@ -207,7 +218,6 @@ export default function DatabaseManager() {
       font-bold py-10 bg-gradient-to-r from-[#3ffc2f] to-[#2f83c3] 
       bg-clip-text text-transparent ">Gerenciador de Departamentos</h1>
         
-      {/* Seletor de Tabela */}
       <div className="mb-6 bg-white p-4 rounded-lg shadow">
         <div className="flex flex-wrap items-end gap-4">
           <div className="flex-1 min-w-[200px]">

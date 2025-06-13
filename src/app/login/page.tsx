@@ -1,8 +1,6 @@
 "use client"; 
-// Diz ao Next.js que este componente será executado no cliente (navegador).
 
 import { useState } from "react"; 
-// Importa o hook useState do React para criarmos variáveis de estado (email, carregando).
 
 import { useRouter } from "next/navigation"; 
 

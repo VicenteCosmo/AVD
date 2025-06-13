@@ -1,10 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Doughnut } from 'react-chartjs-2';
 
-Chart.register(ArcElement, Tooltip, Legend);
 
 const AdminDashboard = () => {
   const [funcionarios, setFuncionarios] = useState([]);
@@ -24,17 +21,7 @@ const AdminDashboard = () => {
        .catch(err => console.error(err))
    }, [])
   
-  const chartData = {
-    labels: ['Ativos', 'Inativos'],
-    datasets: [
-      {
-        label: 'Funcionários',
-        data: [ativos, inativos],
-        backgroundColor: ['#10b981', '#ef4444'],
-        borderWidth: 1,
-      },
-    ],
-  };
+  
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 space-y-8">

@@ -50,8 +50,6 @@ export default function FormModalAssiduidade() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
- 
-
   const openCamera = async () => {
     setIsRegisteringFace(true);
     setIsCameraOpen(true);
@@ -107,12 +105,12 @@ try {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${accessToken}`,
-      // NÃO adicionar Content-Type manualmente aqui!
     },
     body: formData,
   });
 
   const data = await response.json();
+  console.log(data)
   if (response.ok) {
     Swal.fire({ icon: 'success', title: `Rosto cadastrado para ${userName}` });
     closeCamera();

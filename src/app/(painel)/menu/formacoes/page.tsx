@@ -7,7 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Dialog, 
-  DialogHeader, DialogTitle,DialogTrigger  } from "@/components/ui/dialog"
+  DialogHeader, 
+  DialogTitle,
+  DialogTrigger  } from "@/components/ui/dialog";
+import habilidade from "@/components/habilidade"
 import { AuthContext } from "@/app/context/AuthContext"
 import { DialogContent, DialogDescription } from "@radix-ui/react-dialog"
 export type CourseUser = {
@@ -35,7 +38,8 @@ export default function EmployeeCoursesPage() {
   const [courses, setCourses] = useState<CourseUser[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('')
-  const [abrir, setabrir]=useState(false)
+  const [abrir, setabrir]=useState(false);
+  const [mostrar, setmostrar]=useState(false);
   const [enrollingId, setEnrollingId] = useState<number | null>(null)
   const { toast } = useToast()
   
@@ -79,6 +83,8 @@ export default function EmployeeCoursesPage() {
         onChange={e => setFilter(e.target.value)}
         className="mb-4 max-w-sm"
       />
+      <button onClick={()=> setmostrar(true)}>Adiconar Habilidade</button>
+      {mostrar && <habilidade />}
       <Table>
         <TableHeader>
           <TableRow>
