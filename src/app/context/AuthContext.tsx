@@ -6,6 +6,7 @@
     userId: string | null;
     userName: string | null;
     setAccessToken: (token: string | null) => void;
+    logout: () => void;
   }
 
   export const AuthContext = createContext<AuthContextType>({
@@ -13,6 +14,7 @@
     userId: null,
     userName: null,
     setAccessToken: () => {},
+    logout: () => {}
   });
 
   export function AuthProvider({ children }: { children: ReactNode }) {
@@ -24,7 +26,6 @@
       const token = localStorage.getItem("access_token");
       if (token) {
         setAccessToken(token);
-        // Busca perfil
         fetch("http://localhost:8000/api/funcionarios/me/", {
           headers: { Authorization: `Bearer ${token}` },
         })
@@ -36,9 +37,14 @@
           .catch(console.error);
       }
     }, []);
-
+const logout = () => {
+    localStorage.removeItem("access_token");  
+    setAccessToken(null);                      
+    setUserId(null);                           
+    setUserName(null);                         
+  };
     return (
-      <AuthContext.Provider value={{ accessToken, userId, userName, setAccessToken }}>
+      <AuthContext.Provider value={{ accessToken, userId, userName, setAccessToken, logout }}>
         {children}
       </AuthContext.Provider>
     );

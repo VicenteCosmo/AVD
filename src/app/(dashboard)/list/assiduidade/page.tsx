@@ -382,49 +382,6 @@ export default function FormModalAssiduidade() {
         </div>
       )}
 
-      {/* Modal para cadastrar novos rostos */}
-      {isRegisteringFace && isCameraOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96 space-y-4">
-            <h2 className="text-xl font-semibold text-gray-800">Cadastrar Novo Rosto</h2>
-            
-            <video 
-              ref={videoRef} 
-              autoPlay 
-              playsInline 
-              className="w-full h-auto border rounded"
-            />
-            
-            <input
-              type="text"
-              placeholder="Nome do Funcionário"
-              value={newFaceName}
-              onChange={(e) => setNewFaceName(e.target.value)}
-              className="w-full border px-3 py-2 rounded"
-              required
-            />
-            
-            <div className="flex gap-2">
-              <button
-                onClick={registerNewFace}
-                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded"
-                disabled={!newFaceName}
-              >
-                Cadastrar Rosto
-              </button>
-              <button
-                onClick={closeCamera}
-                className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded"
-              >
-                Cancelar
-              </button>
-            </div>
-            
-            {error && <p className="text-red-600 text-sm">{error}</p>}
-          </div>
-        </div>
-      )}
-
       {/* Modal para registrar saída */}
       {isRegisteringExit && isCameraOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

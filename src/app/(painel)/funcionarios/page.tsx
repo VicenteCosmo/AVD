@@ -11,7 +11,7 @@ export type Leave = {
   inicio: string;
   fim: string;
   justificativo: string | null;
-  status: "pendente" | "aprovada" | "rejeitada";
+  status: "pendente" | "aprovado" | "rejeitado";
   admin_comentario: string | null;
   created_at: string;
   funcionario_nome: string;
@@ -34,8 +34,8 @@ const FuncionarioDashboard = () => {
        .then(res => res.json())
        .then((j) => {
       setdispensa(j);
-      const aprovadas = j.filter((l) => l.status === "aprovado").length;
-      const reprovadas = j.filter((l) => l.status === "rejeitado").length;
+      const aprovadas = j.filter((l:Leave) => l.status === "aprovado").length;
+      const reprovadas = j.filter((l:Leave) => l.status === "rejeitado").length;
 
       console.log("Aprovadas:", aprovadas);
       console.log("Rejeitadas:", reprovadas);

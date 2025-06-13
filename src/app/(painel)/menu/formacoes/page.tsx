@@ -10,7 +10,6 @@ import { Dialog,
   DialogHeader, 
   DialogTitle,
   DialogTrigger  } from "@/components/ui/dialog";
-import habilidade from "@/components/habilidade"
 import { AuthContext } from "@/app/context/AuthContext"
 import { DialogContent, DialogDescription } from "@radix-ui/react-dialog"
 export type CourseUser = {
@@ -84,7 +83,6 @@ export default function EmployeeCoursesPage() {
         className="mb-4 max-w-sm"
       />
       <button onClick={()=> setmostrar(true)}>Adiconar Habilidade</button>
-      {mostrar && <habilidade />}
       <Table>
         <TableHeader>
           <TableRow>
