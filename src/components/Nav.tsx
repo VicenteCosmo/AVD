@@ -1,16 +1,13 @@
 import Image from "next/image"
-// import CompanyRegistration from "@/app/formulario/page";
 
-import { User } from "@deemlol/next-icons";
+import { User } from "lucide-react";
 
 const Navbar = () => {
   return (
     <div className='flex h-20  items-center justify-between p-2 bg-transparent '>
-    {/* SEARCH BAR */}
     <div className='md:flex items-center gap-2 px-2'>
       <Image src="/onono1.jpg" alt="" className=" mix-blend-lighten " width={340} height={240}/>
     </div>
-    {/* ICONS AND USER */}
     <div className='flex items-center gap-6 justify-end w-full'>
       <div className='bg-white rounded-full w-7 h-7 flex items-center justify-center cursor-pointer'>
         <Image src="/message.png" alt="" width={20} height={20}/>
