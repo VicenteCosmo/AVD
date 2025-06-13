@@ -10,6 +10,7 @@ export default function DashboardLayout({
 }>) {
   return (
     <div className="h-screen flex">
+
       <div className="w-[20%] md:w-[8%] lg:w-[20%] xl:w-[10%] p-1">
         <Link
           href="/"
@@ -23,6 +24,7 @@ export default function DashboardLayout({
         <Navbar />
         {children}
       </div>
+
     </div>
   );
 }
