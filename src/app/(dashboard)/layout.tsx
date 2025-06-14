@@ -16,7 +16,6 @@ export default function DashboardLayout({
           href="/"
           className="flex items-center justify-center"
         >
-          <Image src="/Onono.png" alt="logo" width={150} height={180} />
         </Link>
         <Menu />
       </div>

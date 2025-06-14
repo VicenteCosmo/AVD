@@ -112,7 +112,6 @@ export default function FormModalAssiduidade() {
       setLoading(false);
     }
   };
-
   const exportToPDF = () => {
     const doc = new jsPDF();
     doc.text('Relatório de Assiduidade', 14, 16);
@@ -211,10 +210,8 @@ export default function FormModalAssiduidade() {
     }
   };
 
-  // Registrar saída automaticamente
   const registrarSaida = async (funcionarioId: number, horaSaida: string) => {
     try {
-      // Encontrar registro pendente de saída
       const registro = assiduidadeList.find(item => 
         item.funcionario.toString() === funcionarioId.toString() && 
         item.saida === null
@@ -242,7 +239,6 @@ export default function FormModalAssiduidade() {
           throw new Error(errorData.error || 'Erro ao registrar saída');
         }
 
-        // Atualizar lista
         await fetchAssiduidade();
       }
     } catch (err: any) {
@@ -250,7 +246,6 @@ export default function FormModalAssiduidade() {
     }
   };
 
-  // Abrir câmera para registrar saída
   const openCameraSaida = async () => {
     setIsRegisteringExit(true);
     await openCamera();
@@ -265,12 +260,12 @@ export default function FormModalAssiduidade() {
   }, []);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="container mx-auto p-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-800">Gestão de Assiduidade</h1>
+        <h1 className="text-2xl font-bold text-gray-500">Gestão de Assiduidade</h1>
         <button
           onClick={exportToPDF}
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded shadow"
+          className="bg-red-600 xl:px-8 hover:bg-red-700 text-white px-4 py-2 rounded shadow"
         >
           Exportar PDF
         </button>
@@ -279,27 +274,19 @@ export default function FormModalAssiduidade() {
       <div className="flex space-x-4">
         <button
           onClick={() => setOpen(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow"
+          className="bg-blue-600 xl:px-8 hover:bg-blue-700 text-white  py-2 rounded shadow"
         >
           Registrar Entrada
         </button>
         
         <button
           onClick={openCameraSaida}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"
+          className="bg-green-600 hover:bg-green-700 xl:px-8 text-white px-4 py-2 rounded shadow"
         >
           Registrar Saída
         </button>
         
-        <button
-          onClick={() => {
-            setIsRegisteringFace(true);
-            openCamera();
-          }}
-          className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded shadow"
-        >
-          Cadastrar Novo Rosto
-        </button>
+        
       </div>
 
       {open && (
@@ -382,7 +369,6 @@ export default function FormModalAssiduidade() {
         </div>
       )}
 
-      {/* Modal para registrar saída */}
       {isRegisteringExit && isCameraOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96 space-y-4">

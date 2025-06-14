@@ -21,10 +21,9 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body className={inter.className}>
         <AuthProvider>
-          <div className="bg-[#27282c]">
 
               {children}
-          </div>
+          
         </AuthProvider>
       </body>
     </html>

@@ -1,4 +1,3 @@
-import { FooterWithLogo } from "@/components/Footer"
 import Section1 from "@/components/Section1"
 import Section2 from "@/components/Section2"
 import Navbar from "@/components/Nav"
@@ -15,7 +14,6 @@ const Homepage = () => {
               <Section1 />
             <Section2 />
             </main>
-            <FooterWithLogo />
           </div>
     </div>
 

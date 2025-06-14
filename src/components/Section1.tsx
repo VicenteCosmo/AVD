@@ -18,7 +18,6 @@ export default function Section1(){
 
                 </div>
 
-                {/* Image */}
                 <div className="-my-10  md:block " >
                     <Image src='/hr.png' alt="assesment" className=" w-100 " width={400} height={400}  />
                 </div>
@@ -27,13 +26,13 @@ export default function Section1(){
 
             {/* Buttos */}
             <div className=" gap-x-9 flex lg:ml-28  " >
-                        <Link href="/registrar" className="bg-white px-10 py-5 rounded-3xl hover:bg-transparent hover:border-white
+                        <Link href="/formulario" className="bg-white px-10 py-5 rounded-3xl hover:bg-transparent hover:border-white
                         hover:border-2
                         " >
                             <span className="text-black hover:text-white " >Registrar agora</span>
                         </Link>
                     
-                        <Link href="/login" className="bg-transparent border-2 border-white px-10 py-5 rounded-3xl hover:bg-white
+                        <Link href="/logincomsenha" className="bg-transparent border-2 border-white px-10 py-5 rounded-3xl hover:bg-white
                         
                         " >
                             <span className="text-white hover:text-black " >Entrar agora</span>
