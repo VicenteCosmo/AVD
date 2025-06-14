@@ -7,7 +7,7 @@ import { AuthContext } from '@/app/context/AuthContext';
 
 const Navbar = () => {
   const router = useRouter();
-  const { userName, logout } = useContext(AuthContext);
+  const { userName } = useContext(AuthContext);
 
   const handleLogout = () => {
     router.push('/logincomsenha');
@@ -78,7 +78,7 @@ const Navbar = () => {
                     href="/personalizar"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
-                    Configu
+                    Configurações
                   </Link>
                 </li>
                 <li>
