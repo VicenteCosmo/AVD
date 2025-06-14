@@ -1,6 +1,6 @@
 import Image from "next/image"
 
-import { User } from "@deemlol/next-icons";
+import { User } from "lucide-react";
 
 const Navbar = () => {
   return (
