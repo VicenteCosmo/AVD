@@ -211,10 +211,8 @@ export default function FormModalAssiduidade() {
     }
   };
 
-  // Registrar saída automaticamente
   const registrarSaida = async (funcionarioId: number, horaSaida: string) => {
     try {
-      // Encontrar registro pendente de saída
       const registro = assiduidadeList.find(item => 
         item.funcionario.toString() === funcionarioId.toString() && 
         item.saida === null
@@ -242,7 +240,6 @@ export default function FormModalAssiduidade() {
           throw new Error(errorData.error || 'Erro ao registrar saída');
         }
 
-        // Atualizar lista
         await fetchAssiduidade();
       }
     } catch (err: any) {
@@ -404,21 +401,7 @@ export default function FormModalAssiduidade() {
               required
             />
             
-            <div className="flex gap-2">
-              <button
-                onClick={registerNewFace}
-                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded"
-                disabled={!newFaceName}
-              >
-                Cadastrar Rosto
-              </button>
-              <button
-                onClick={closeCamera}
-                className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded"
-              >
-                Cancelar
-              </button>
-            </div>
+           
             
             {error && <p className="text-red-600 text-sm">{error}</p>}
           </div>
