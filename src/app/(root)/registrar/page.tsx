@@ -3,7 +3,6 @@ import React, { SyntheticEvent, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import Swal from 'sweetalert2'
-import { Target } from '@deemlol/next-icons'
 
 const Page = () => {
 
