@@ -42,9 +42,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt',
-    #"djoser",
-    "rest_framework_simplejwt.token_blacklist",
-   #'rest_framework_simplejwt.token_blacklist',
 
 ]
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -106,11 +103,11 @@ WSGI_APPLICATION = 'recursos.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'avd',
-        'USER': 'postgres',
-        'PASSWORD': 'Aluno2026',
-        'HOST': 'localhost',      # ou IP do servidor
-        'PORT': '5432',           
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
 

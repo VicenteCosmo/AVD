@@ -7,6 +7,7 @@ from .views import (
     ListMyLeavesAPIView,
     ListAllLeavesAPIView,
     UpdateLeaveStatusAPIView,
+    facial_recognition
     #registrar_empresa
 )
 urlpatterns = [
@@ -92,9 +93,9 @@ urlpatterns = [
     ),
 
     path(
-        'facial_recognition/',
+        'facial/',
         views.facial_recognition,
-        name='face-recognition'
+        name='facial'
     ),
     path(
         'register_face/',
