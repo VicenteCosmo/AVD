@@ -21,7 +21,7 @@ SECRET_KEY = 'django-insecure-drd4vkd5pbo3twcsvuhfj6no+-$xl3u*1zi-w@e=xrp4g(5uq*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 SITE_NAME = "Test Django Next.js"
 
@@ -197,3 +197,4 @@ REST_AUTH={
 }
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
