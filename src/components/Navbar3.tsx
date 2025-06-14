@@ -1,6 +1,5 @@
 import Image from "next/image"
 
-import { User } from "@deemlol/next-icons";
 
 const Navbar = () => {
   return (
