@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar1";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
-import { AuthProvider } from "../context/AuthContext";
+import { AuthProvider } from "@/app/context/AuthContext";
 export default function DashboardLayout({
   children,
 }: Readonly<{

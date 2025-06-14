@@ -1,3 +1,4 @@
+// import DashboardLayout from "./(dashboard)/layout"
 "use client"
 
 import Image from "next/image"
@@ -33,7 +34,7 @@ export default function Section1(){
                             <span className="text-black hover:text-white " >Registrar agora</span>
                         </Link>
                     
-                        <Link href="/logincomsenha" className="bg-transparent border-2 border-white px-10 py-5 rounded-3xl hover:bg-white
+                        <Link href="/login" className="bg-transparent border-2 border-white px-10 py-5 rounded-3xl hover:bg-white
                         
                         " >
                             <span className="text-white hover:text-black " >Entrar agora</span>

@@ -34,8 +34,8 @@ const FuncionarioDashboard = () => {
        .then(res => res.json())
        .then((j) => {
       setdispensa(j);
-      const aprovadas = j.filter((l) => l.status === "aprovado").length;
-      const reprovadas = j.filter((l) => l.status === "rejeitado").length;
+      const aprovadas = j.filter((l: { status: string; }) => l.status === "aprovado").length;
+      const reprovadas = j.filter((l: { status: string; }) => l.status === "rejeitado").length;
 
       console.log("Aprovadas:", aprovadas);
       console.log("Rejeitadas:", reprovadas);
