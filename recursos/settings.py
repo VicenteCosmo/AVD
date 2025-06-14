@@ -19,7 +19,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 SECRET_KEY = 'django-insecure-drd4vkd5pbo3twcsvuhfj6no+-$xl3u*1zi-w@e=xrp4g(5uq*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -103,11 +103,11 @@ WSGI_APPLICATION = 'recursos.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
+        'NAME': 'byjpm3pwyopr6qevnu7e',
+        'USER': 'uoqrlwvb4xje9qiff1bs',
+        'PASSWORD': 'l611YyOVOYVJ8sbZM79DcF8h26wtGQ',
+        'HOST': 'byjpm3pwyopr6qevnu7e-postgresql.services.clever-cloud.com',
+        'PORT': '50013',
     }
 }
 
