@@ -22,7 +22,6 @@ const Navbar = () => {
         <span className="text-xs leading-3 font-medium"></span>
         <span className="text-[10px] text-gray-500 text-right">Admin</span>
       </div>
-      <User size={40} color='#fff' />
     </div>
   </div>
 
