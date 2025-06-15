@@ -18,7 +18,7 @@ const Navbar = () => {
       <div className="container mx-auto h-16 flex items-center justify-between px-4">
 
         <Link href="/" className="flex items-center gap-2">
-          <span className="text-lg font-semibold text-gray-800">Recursos Humanos</span>
+          <span className="text-lg lg:text-4x1 font-semibold lg:text-blue-800">Recursos Humanos</span>
         </Link>
 
         <div className="hidden md:flex items-center bg-gray-100 rounded-full px-3 py-1 w-64 focus-within:ring-2 focus-within:ring-indigo-500">

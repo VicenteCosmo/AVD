@@ -49,9 +49,9 @@ const FuncionarioDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 space-y-8">
-      <h1 className="text-4xl font-bold text-gray-500">Painel do Funcionario</h1>
+      <h1 className="md:text-4xl font-bold text-gray-500">Painel do Funcionario</h1>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {[
           { label: 'Cadastrados', value: funcionarios.length, color: 'blue' },
           { label: 'Dispensas Reprovadas', value: reprovada, color: 'teal' },

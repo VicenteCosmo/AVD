@@ -36,6 +36,8 @@ export  default function AdminLeavesPage() {
   const [leaves, setLeaves] = useState<Leave[]>([])
   const [loading, setLoading] = useState(true)
   const { toast } = useToast()
+  const [file, setFile] = useState<File | null>(null);
+
 
   useEffect(() => {
     fetch('https://backend-django-2-7qpl.onrender.com/api/leaves/all/')
@@ -44,7 +46,9 @@ export  default function AdminLeavesPage() {
       .catch(err => console.error(err))
       .finally(() => setLoading(false))
   }, [])
-
+const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) setFile(e.target.files[0]);
+  };
   const handleDecision = async (id: number, decision: 'aprovado' | 'rejeitado') => {
     const comment = await Swal.fire({
       title: decision === 'aprovado' ? 'Comentário de aprovação' : 'Comentário de reprovação',
@@ -79,8 +83,8 @@ export  default function AdminLeavesPage() {
         <TableHeader>
           <TableRow>
             <TableHead>Funcionário</TableHead>
-            <TableHead>Motivo</TableHead>
-            <TableHead>Período</TableHead>
+              <TableHead>Motivo</TableHead>
+              <TableHead>Período</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Comentário</TableHead>
             <TableHead>Justificativo</TableHead>
