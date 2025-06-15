@@ -18,7 +18,7 @@ const Page = () => {
   const [controlSubmit, setControlSubmit] = useState(false)
 
   const router = useRouter()
-  const url = 'http://localhost:8000/registrar_empresa/registrar'
+  const url = 'https://avd-registrar-empresa.onrender.com/registrar_empresa/registrar'
 
   const submit = async (e: SyntheticEvent) => {
     e.preventDefault()
