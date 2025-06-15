@@ -21,9 +21,9 @@ export default function Navbar ({clicadoMenu}:Props) {
   return (
     <header className="w-full bg-white shadow-md">
       <div className="container mx-auto h-16 flex items-center justify-between px-4">
-        <Link href="/" onClick={clicadoMenu} className="flex items-center md:hidden text-gray-700 hover:text-blue-600">
+        <button  onClick={clicadoMenu} className="flex items-center md:hidden text-gray-700 hover:text-blue-600">
         <Home className="w-5 h-5 mr-2" />
-        </Link>
+      </button>
         <Link href="/" className="flex items-center gap-2">
         <Image src="/Onono.png" alt="logo" width={150} height={180} />
           

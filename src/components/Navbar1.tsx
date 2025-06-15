@@ -2,13 +2,18 @@
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useContext } from 'react';
+import React, { useContext, useState  } from 'react';
 import { AuthContext } from '@/app/context/AuthContext';
-
-const Navbar = () => {
+import { Home } from "lucide-react";
+type Props = {
+  clicadoMenu: () => void;
+};
+export default function Navbar ({clicadoMenu}: Props) {
   const router = useRouter();
   const { userName } = useContext(AuthContext);
-
+  const [abrirMenu, setabrirMenu]=useState(false)
+   
+  console.log(abrirMenu)
   const handleLogout = () => {
     router.push('/logincomsenha');
   };
@@ -16,7 +21,9 @@ const Navbar = () => {
   return (
     <header className="w-full bg-white shadow-md">
       <div className="container mx-auto h-16 flex items-center justify-between px-4">
-
+        <button  onClick={clicadoMenu} className="flex items-center md:hidden text-gray-700 hover:text-blue-600">
+                <Home className="w-5 h-5 mr-2" />
+              </button>
         <Link href="/" className="flex items-center gap-2">
           <Image src="/Onono.png" alt="logo" width={150} height={180} />
         </Link>
@@ -101,4 +108,3 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
