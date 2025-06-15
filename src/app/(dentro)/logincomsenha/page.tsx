@@ -29,7 +29,7 @@ export default function LoginComSenha() {
       localStorage.setItem('access_token', data.access);
       localStorage.setItem('refresh_token', data.refresh);
 
-      const userRes = await fetch('http://localhost:8000/api/funcionarios/me/', {
+      const userRes = await fetch('https://backend-django-2-7qpl.onrender.com/api/funcionarios/me/', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${data.access}`,
