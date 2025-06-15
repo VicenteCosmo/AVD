@@ -14,7 +14,7 @@ const Login = () => {
   const [repName, setRepName] = useState('')
 
   const router = useRouter()
-  const url = 'http://localhost:8000/registrar_empresa/password-reset/confirm/'
+  const url = 'https://avd-registrar-empresa.onrender.com/registrar_empresa/password-reset/confirm/'
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
