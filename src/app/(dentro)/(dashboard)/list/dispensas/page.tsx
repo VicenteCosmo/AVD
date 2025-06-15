@@ -38,7 +38,7 @@ export  default function AdminLeavesPage() {
   const { toast } = useToast()
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/leaves/all/')
+    fetch('https://backend-django-2-7qpl.onrender.com/api/leaves/all/')
       .then(res => res.json())
       .then(json => setLeaves(json.message || []))
       .catch(err => console.error(err))
@@ -57,7 +57,7 @@ export  default function AdminLeavesPage() {
     const mappedDecision = decision === 'rejeitado' ? 'rejeitado' : 'aprovado';
 
     try {
-      const res = await fetch(`http://localhost:8000/api/leaves/update/${id}/`, {
+      const res = await fetch(`https://backend-django-2-7qpl.onrender.com/api/leaves/update/${id}/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: mappedDecision, admin_comentario: comment })

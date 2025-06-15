@@ -26,7 +26,7 @@
       const token = localStorage.getItem("access_token");
       if (token) {
         setAccessToken(token);
-        fetch("http://localhost:8000/api/funcionarios/me/", {
+        fetch("https://backend-django-2-7qpl.onrender.com/api/funcionarios/me/", {
           headers: { Authorization: `Bearer ${token}` },
         })
           .then((res) => res.json())

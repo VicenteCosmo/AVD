@@ -28,7 +28,7 @@ const FuncionarioDashboard = () => {
   const [departamentos, setDepartamentos] = useState([]);
 
  useEffect(() => {
-     fetch('http://localhost:8000/api/dispensa/my/', {
+     fetch('https://backend-django-2-7qpl.onrender.com/api/dispensa/my/', {
       headers: { Authorization: `Bearer ${accessToken}` },
     })
        .then(res => res.json())

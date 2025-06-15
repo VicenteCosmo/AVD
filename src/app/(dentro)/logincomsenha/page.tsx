@@ -17,7 +17,7 @@ export default function LoginComSenha() {
   setCarregando(true);
 
   try {
-    const res = await fetch('http://localhost:8000/api/token/', {
+    const res = await fetch('https://backend-django-2-7qpl.onrender.com/api/token/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password: senha }),

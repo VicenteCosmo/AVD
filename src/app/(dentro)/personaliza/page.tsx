@@ -141,7 +141,7 @@ fields.forEach(item => {
 });
 
     try {
-      const response = await fetch('http://localhost:8000/tables/create/', {
+      const response = await fetch('https://backend-django-2-7qpl.onrender.com/tables/create/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

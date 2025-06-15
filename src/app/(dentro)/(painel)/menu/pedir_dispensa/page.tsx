@@ -44,7 +44,7 @@ export default function EmployeeLeavesPage() {
 
   useEffect(() => {
     if (!accessToken) return;
-    fetch("http://localhost:8000/api/dispensa/my/", {
+    fetch("https://backend-django-2-7qpl.onrender.com/api/dispensa/my/", {
       headers: { Authorization: `Bearer ${accessToken}` },
     })
       .then((r) => r.json())
@@ -72,7 +72,7 @@ function calculateDays(start: string, end: string): number {
     body.append("fim", fim);
     if (file) body.append("justificativo", file);
 
-    const res = await fetch("http://localhost:8000/api/dispensa/create/", {
+    const res = await fetch("https://backend-django-2-7qpl.onrender.com/api/dispensa/create/", {
       method: "POST",
       headers: { Authorization: `Bearer ${accessToken}` },
       body,

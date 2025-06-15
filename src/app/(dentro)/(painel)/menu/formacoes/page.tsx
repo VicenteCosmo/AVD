@@ -43,7 +43,7 @@ export default function EmployeeCoursesPage() {
   const { toast } = useToast()
   
   useEffect(() => {
-    fetch('http://localhost:8000/api/get_courses/')
+    fetch('https://backend-django-2-7qpl.onrender.com/api/get_courses/')
       .then(res => res.json())
       .then(json => setCourses(json.message || []))
       .catch(err => console.error(err))
@@ -54,7 +54,7 @@ export default function EmployeeCoursesPage() {
     setEnrollingId(id)
     const accessToken= localStorage.getItem('access_token')
     try {
-      const res = await fetch(`http://localhost:8000/api/courses/enroll/${id}/`, { method: 'POST' , headers:{
+      const res = await fetch(`https://backend-django-2-7qpl.onrender.com/api/courses/enroll/${id}/`, { method: 'POST' , headers:{
         'Authorization':`Bearer ${accessToken}`,
         'Content-Type':'application/json',
       }})

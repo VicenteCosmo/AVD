@@ -35,7 +35,7 @@ export default function FormModalAssiduidade() {
   }, [userId]);
 
   const fetchAssiduidade = async () => {
-    const res = await fetch(`http://127.0.0.1:8000/api/assiduidade/?funcionario=${userId}`,{
+    const res = await fetch(`https://backend-django-2-7qpl.onrender.com/api/assiduidade/?funcionario=${userId}`,{
       headers:{
         Authorization:`Bearer ${accessToken}`,
       },}

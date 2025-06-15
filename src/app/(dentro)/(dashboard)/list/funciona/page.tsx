@@ -26,7 +26,7 @@ export default function DatabaseManager() {
     const fetchTables = async () => {
       try {
         setLoading(true)
-        const response = await fetch('http://localhost:8000/tables/')
+        const response = await fetch('https://backend-django-2-7qpl.onrender.com/tables/')
         const data = await response.json()
         console.log(data.tables)
         
@@ -56,7 +56,7 @@ export default function DatabaseManager() {
       })
 
       const response = await fetch(
-        `http://localhost:8000/tables/${selectedTable}/data/?${query}`
+        `https://backend-django-2-7qpl.onrender.com/tables/${selectedTable}/data/?${query}`
       )
       const data = await response.json()
       console.log(data)
@@ -92,7 +92,7 @@ export default function DatabaseManager() {
     try {
       setLoading(true)
       const response = await fetch(
-        `http://localhost:8000/tables/${selectedTable}/data/`,
+        `https://backend-django-2-7qpl.onrender.com/tables/${selectedTable}/data/`,
         {
           method: 'PUT',
           headers: {
@@ -123,7 +123,7 @@ export default function DatabaseManager() {
     try {
       setLoading(true)
       const response = await fetch(
-        `http://localhost:8000/tables/${selectedTable}/data/`,
+        `https://backend-django-2-7qpl.onrender.com/tables/${selectedTable}/data/`,
         {
           method: 'DELETE',
           headers: {
@@ -161,7 +161,7 @@ export default function DatabaseManager() {
         email: newRecordForm[email1],
       }
 
-      const funcionarioResponse = await fetch('http://localhost:8000/api/funcionarios/', {
+      const funcionarioResponse = await fetch('https://backend-django-2-7qpl.onrender.com/api/funcionarios/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -174,7 +174,7 @@ export default function DatabaseManager() {
 
     }
 
-    const response = await fetch(`http://localhost:8000/data/${selectedTable}/`, {
+    const response = await fetch(`https://backend-django-2-7qpl.onrender.com/data/${selectedTable}/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

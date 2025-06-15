@@ -13,7 +13,7 @@ const AdminDashboard = () => {
   const [departamentos, setDepartamentos] = useState([]);
 
  useEffect(() => {
-     fetch('http://localhost:8000/api/leaves/all/')
+     fetch('https://backend-django-2-7qpl.onrender.com/api/leaves/all/')
        .then(res => res.json())
        .then(json => {
          const dispensas = json.message || []

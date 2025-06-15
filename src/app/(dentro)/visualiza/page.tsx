@@ -32,7 +32,7 @@ export default function DatabaseManager() {
     const fetchTables = async () => {
       try {
         setLoading(true)
-        const response = await fetch('http://localhost:8000/tables/')
+        const response = await fetch('http://https://backend-django-2-7qpl.onrender.com/tables/')
         const data = await response.json()
         console.log(data.tables)
         

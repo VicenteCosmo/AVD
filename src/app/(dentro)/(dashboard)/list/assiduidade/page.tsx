@@ -48,7 +48,7 @@ export default function FormModalAssiduidade() {
   
 
   const fetchAssiduidade = async () => {
-    const res = await fetch('http://127.0.0.1:8000/api/assiduidade/todos/');
+    const res = await fetch('http://https://backend-django-2-7qpl.onrender.com/api/assiduidade/todos/');
     const data = await res.json();
     setAssiduidadeList(data);
   };
@@ -63,7 +63,7 @@ export default function FormModalAssiduidade() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/assiduidade/todos/', {
+      const res = await fetch('https://backend-django-2-7qpl.onrender.com/api/assiduidade/todos/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -92,7 +92,7 @@ export default function FormModalAssiduidade() {
   const handleSaidaEdit = async (id: number, saida: string) => {
     setLoading(true);
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/assiduidade/${id}/`, {
+      const res = await fetch(`https://backend-django-2-7qpl.onrender.com/api/assiduidade/${id}/`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ saida }),
@@ -179,7 +179,7 @@ export default function FormModalAssiduidade() {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/facial/', {
+      const response = await fetch('https://backend-django-2-7qpl.onrender.com/api/facial/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image: imageData }),
@@ -224,7 +224,7 @@ export default function FormModalAssiduidade() {
         const now = new Date();
         const dataAtual = now.toISOString().split('T')[0];
         
-        const res = await fetch('http://127.0.0.1:8000/api/assiduidade/', {
+        const res = await fetch('https://backend-django-2-7qpl.onrender.com/api/assiduidade/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

@@ -30,7 +30,7 @@
       setCarregando(true);
 
       try {
-        const res = await fetch("http://localhost:8000/api/funcionarios/verify-otp/", {
+        const res = await fetch("https://backend-django-2-7qpl.onrender.com/api/funcionarios/verify-otp/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, otp }),
@@ -59,7 +59,7 @@
       setCarregando(true);
 
       try {
-        const res = await fetch("http://localhost:8000/api/funcionarios/set-password/", {
+        const res = await fetch("https://backend-django-2-7qpl.onrender.com/api/funcionarios/set-password/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, senha }),
@@ -67,7 +67,7 @@
 
         if (res.ok) {
           alert("Senha criada com sucesso! Faça login com email e senha.");
-          const res = await fetch('http://localhost:8000/api/token/', {
+          const res = await fetch('https://backend-django-2-7qpl.onrender.com/api/token/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password: senha }),
@@ -79,7 +79,7 @@
         localStorage.setItem('access_token', data.access);
         localStorage.setItem('refresh_token', data.refresh);
 
-        const userRes = await fetch('http://localhost:8000/api/funcionarios/me/', {
+        const userRes = await fetch('https://backend-django-2-7qpl.onrender.com/api/funcionarios/me/', {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${data.access}`,
