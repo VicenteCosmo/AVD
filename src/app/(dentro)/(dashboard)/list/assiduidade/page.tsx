@@ -48,7 +48,7 @@ export default function FormModalAssiduidade() {
   
 
   const fetchAssiduidade = async () => {
-    const res = await fetch('http://https://backend-django-2-7qpl.onrender.com/api/assiduidade/todos/');
+    const res = await fetch('https://backend-django-2-7qpl.onrender.com/api/assiduidade/todos/');
     const data = await res.json();
     setAssiduidadeList(data);
   };
