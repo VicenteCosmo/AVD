@@ -1,31 +1,33 @@
+"use client"
 import Menu1 from "@/components/Menu1";
 import Navbar from "@/components/Navbar1";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { AuthProvider } from "@/app/context/AuthContext";
+import { useState } from "react";
 export default function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+   const [abrirMenu, setabrirMenu]=useState(false)
   return (
     <div className="h-screen flex">
-
-      
-      <div className="w-[20%] md:w-[8%] lg:w-[20%] xl:w-[10%] p-1">
-        <Link
-          href="/"
-          className="flex items-center justify-center"
-        >
-          <Image src="/Onono.png" alt="logo" width={150} height={180} />
-        </Link>
-        <Menu1/>
+      <div className="flex-col w-[20%] md:w-[8%] hidden md:flex lg:w-[14%] xl:w-[3%] ">
+        <Menu1 />
       </div>
-      <div className="w-[86%] md:w-[92%] lg:w-[84%] xl:w-[86%] bg-[#F7F8FA] overflow-scroll flex flex-col">
-        <Navbar />
-        {children}
-      </div>
-    </div>
+       {abrirMenu && (
+        <div className="inset-0 bg-white z-50 md:hidden w-[20%] shadow-lg p-4">
+                  <Menu1/>
+        </div>
+              )}
+      <div className="flex-1 flex flex-col bg-gray-50 overflow-auto">
+        <Navbar clicadoMenu={() => {setabrirMenu(!abrirMenu)}} />
+        <main className="flex-1 p-4 overflow-auto">
+          {children}
+        </main>
+          </div>
+        </div>
   );
 }
