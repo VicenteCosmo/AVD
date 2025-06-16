@@ -32,7 +32,11 @@ const Navbar = () => {
 
         <nav className="flex items-center space-x-4">
 
-          <button className="relative p-2 bg-white rounded-full hover:bg-gray-100 transition">
+          <button
+            className="relative p-2 bg-white rounded-full hover:bg-gray-100 transition"
+            aria-label="Mensagens"
+            title="Mensagens"
+          >
             <Image src="/message.png" alt="Mensagens" width={20} height={20} />
           </button>
 

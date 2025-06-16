@@ -165,11 +165,7 @@ const Login = () => {
         </form>
         <p className="mt-4 text-center text-gray-700">
           Ainda não tem cadastro?{" "}
-<<<<<<< HEAD
           <a href="/registrar" className="text-blue-600 hover:underline">
-=======
-          <a href="/company-signup" className="text-blue-600 hover:underline">
->>>>>>> 1043ec895e2d0dcdd4cbbb51dc83e9f9b0735970
             Cadastrar Empresa
           </a>
         </p>

@@ -28,11 +28,7 @@ const menuItems = [
       {
         icon: "/treinamento.png",
         label: "Formações",
-<<<<<<< HEAD
         href: "/list/get_courses",
-=======
-        href: "/list/Formacoes",
->>>>>>> 1043ec895e2d0dcdd4cbbb51dc83e9f9b0735970
       },
       {
         icon: "/diagrama.png",

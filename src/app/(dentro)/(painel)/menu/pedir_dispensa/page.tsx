@@ -98,6 +98,7 @@ function calculateDays(start: string, end: string): number {
             onChange={(e) => setmotivo(e.target.value)}
             required
             className="w-full border p-2 rounded"
+            placeholder="Descreva o motivo da dispensa"
           />
         </div>
         <div className="grid grid-cols-2 gap-4">

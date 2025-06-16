@@ -116,15 +116,17 @@ export default function AssiduidadeModal({
           {type === "create" && (
             <>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="funcionario-select" className="block text-sm font-medium text-gray-700 mb-1">
                   Funcionário
                 </label>
                 <select
+                  id="funcionario-select"
                   name="funcionario"
                   value={formData.funcionario || ""}
                   onChange={handleChange}
                   className="w-full border p-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
+                  aria-label="Funcionário"
                 >
                   <option value="">Selecione o Funcionário</option>
                   {funcionarios.map((f: any) => (
@@ -145,6 +147,8 @@ export default function AssiduidadeModal({
                   onChange={handleChange}
                   className="w-full border p-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
+                  title="Informe a hora de entrada"
+                  placeholder="Informe a hora de entrada"
                 />
               </div>
               <div>
@@ -158,13 +162,18 @@ export default function AssiduidadeModal({
                   onChange={handleChange}
                   className="w-full border p-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
+                  title="Informe a hora de entrada"
+                  placeholder="Informe a hora de entrada"
                 />
               </div>
             </>
           )}
           {type === "edit" && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                className="block text-sm font-medium text-gray-700 mb-1"
+                title="Informe a hora de saída"
+              >
                 Hora de Saída
               </label>
               <input
@@ -174,6 +183,8 @@ export default function AssiduidadeModal({
                 onChange={handleChange}
                 className="w-full border p-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
+                placeholder="Informe a hora de saída"
+                title="Informe a hora de saída"
               />
             </div>
           )}

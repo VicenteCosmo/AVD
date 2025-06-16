@@ -182,6 +182,7 @@ fields.forEach(item => {
           <p className="mt-2 text-sm text-gray-600">
             Defina a estrutura da sua Empresa. O campo ID é obrigatório e configurado automaticamente.
           </p>
+          <p><a href="/admin">Ir directo ao painel</a></p>
         </div>
 
         <div className="bg-white shadow rounded-lg p-6">
