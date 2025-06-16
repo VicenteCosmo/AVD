@@ -112,6 +112,7 @@ function Section2() {
       </h1>
 
       {/* Slider Section */}
+<<<<<<< HEAD
 <div className=" bg-blue-200 py-10 overflow-hidden">
   <div className="w-full max-w-[350px] md:max-w-3xl sm:max-w-[600px]  px-4 mx-auto">
     <Slider {...sliderSettings}>
@@ -131,6 +132,27 @@ function Section2() {
     </Slider>
   </div>
 </div>
+=======
+      <div className="mx-auto bg-blue-200 py-10">
+        <div className="container mx-auto px-4">
+          <Slider {...sliderSettings}>
+            {sliderImages.map((src, index) => (
+              <div key={index} className="px-2">
+                <div className="flex justify-center">
+                  <Image 
+                    src={src} 
+                    alt={`Slide ${index + 1}`} 
+                    width={200} 
+                    height={100}
+                    className="object-contain"
+                  />
+                </div>
+              </div>
+            ))}
+          </Slider>
+        </div>
+      </div>
+>>>>>>> 1043ec895e2d0dcdd4cbbb51dc83e9f9b0735970
 
       {/* Module Cards Section */}
       <div className="container mx-auto px-4 py-10 mt-16 bg-transparent ">

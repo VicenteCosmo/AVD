@@ -48,7 +48,7 @@ export default function FormModalAssiduidade() {
   
 
   const fetchAssiduidade = async () => {
-    const res = await fetch('http://https://backend-django-2-7qpl.onrender.com/api/assiduidade/todos/');
+    const res = await fetch('https://backend-django-2-7qpl.onrender.com/api/assiduidade/todos/');
     const data = await res.json();
     setAssiduidadeList(data);
   };
@@ -344,6 +344,8 @@ export default function FormModalAssiduidade() {
               onChange={handleChange}
               className="w-full border px-3 py-2 rounded"
               required
+              placeholder="Horário de entrada"
+              title="Horário de entrada"
             />
 
             <input
@@ -353,6 +355,8 @@ export default function FormModalAssiduidade() {
               onChange={handleChange}
               className="w-full border px-3 py-2 rounded"
               required
+              placeholder="Horário de entrada"
+              title="Horário de entrada"
             />
 
             <div className="flex gap-2">
@@ -464,6 +468,8 @@ export default function FormModalAssiduidade() {
                       className="border px-2 py-1 rounded"
                       value={editedSaida}
                       onChange={(e) => setEditedSaida(e.target.value)}
+                      placeholder="Digite o horário de saída"
+                      title="Horário de saída"
                     />
                   ) : (
                     item.saida || '-'
