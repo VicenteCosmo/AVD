@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 'use client'
 import Menu from "@/components/Menu";
 import Navbar from "@/components/Navbar";
@@ -33,7 +32,6 @@ export default function DashboardLayout({
   );
 
 }
-=======
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -59,4 +57,3 @@ const Layout = ({children}: {children: React.ReactNode}) => {
 }
 
 export default Layout
->>>>>>> 1043ec895e2d0dcdd4cbbb51dc83e9f9b0735970
